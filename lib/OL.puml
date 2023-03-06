@@ -1,0 +1,205 @@
+@startuml
+set namespaceSeparator ::
+
+
+class "open_loyalty::components::gradient_card.dart::GradientCard" {
+  +String couponId
+  +String name
+  +String campaignActivity
+  +String costInPoints
+  +Color startColor
+  +Color endColor
+  -double _borderRadius
+  +Widget build()
+  -dynamic _showDialog()
+  -dynamic _showSuccessDialog()
+  -dynamic _showErrorDialog()
+  -dynamic _showWaitingDialog()
+}
+
+"open_loyalty::components::gradient_card.dart::GradientCard" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "open_loyalty::components::gradient_card.dart::GradientCard"
+
+
+
+class "open_loyalty::Firebase::locations.dart::Office" {
+  +String address
+  +String id
+  +double lat
+  +double lng
+  +String name
+  +double distance
+}
+
+
+class "open_loyalty::main.dart::LoginScreen" {
+  +_LoginScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "open_loyalty::main.dart::LoginScreen"
+
+
+class "open_loyalty::models::coupons_model.dart::CouponModel" {
+  +bool canBeUsed
+  +String campaignId
+  +DateTime purchaseAt
+  +double costInPoints
+  +bool used
+  +String couponId
+  +String couponCode
+  +String status
+  +DateTime activeSince
+  +DateTime activeTo
+  +String deliveryStatus
+}
+
+class "open_loyalty::models::customer_model.dart::CustomerModel" {
+  +String id
+  +String name
+  +String gender
+  +String birthday
+  +String nationality
+  +String cmd
+  +String phone
+  +String email
+  +String loyaltyCardNumber
+  +String levelId
+  +String location
+  +Map<String, String> toJson()
+}
+
+class "open_loyalty::models::customer_model.dart::CustomerStatusModel" {
+  +double points
+  +double p2pPoints
+  +double totalEarnedPoints
+  +double usedPoints
+  +double expiredPoints
+  +double lockedPoints
+  +String level
+  +String levelName
+  +double levelConditionValue
+  +String nextLevel
+  +String nextLevelName
+  +double nextLevelConditionValue
+  +double transactionsAmountWithoutDeliveryCosts
+  +double transactionsAmountToNextLevel
+  +double averageTransactionsAmount
+  +int transactionsCount
+  +double transactionsAmount
+  +String currency
+  +double pointsExpiringNextMonth
+}
+
+
+class "open_loyalty::models::point_model.dart::PointTransferModel" {
+  +String pointsTransferId
+  +String accountId
+  +String customerId
+  +DateTime createdAt
+  +DateTime expiresAt
+  +double value
+  +String state
+  +String type
+  +String comment
+  +String issuer
+}
+
+class "open_loyalty::models::product_model.dart::ProductModel" {
+  +String productSku
+  +String productName
+  +String brand
+  +double price
+  +String warrantyId
+  +DateTime purchaseDate
+  +DateTime warrantyExpired
+  +String image
+  +String store
+}
+
+
+
+class "open_loyalty::models::warranty_model.dart::WarrantyModel" {
+  +String warrantyId
+  +String productSku
+  +DateTime bookingDate
+  +String bookingTime
+  +String warrantyCenter
+  +DateTime createdAt
+  +bool active
+  +String discription
+  +String cost
+  +String paymentStatus
+}
+
+
+class "open_loyalty::view::Schedule_Warranty::components::booking_confirm.dart::BookingConfirmed" {
+  -DateTime _bookingDate
+  -SL
+  -String _center
+  +ProductModel product
+  +_BookingConfirmedState createState()
+}
+
+"open_loyalty::view::Schedule_Warranty::components::booking_confirm.dart::BookingConfirmed" o-- "open_loyalty::models::product_model.dart::ProductModel"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "open_loyalty::view::Schedule_Warranty::components::booking_confirm.dart::BookingConfirmed"
+
+class "open_loyalty::view::Schedule_Warranty::components::booking_confirm.dart::_BookingConfirmedState" {
+  -Repository _repository
+  +String random()
+  +Widget build()
+  -dynamic _showMaterialDialog()
+  -dynamic _showErrorDialog()
+  +Widget time()
+  +Widget warrantyCenter()
+  +Widget info()
+}
+
+"open_loyalty::view::Schedule_Warranty::components::booking_confirm.dart::_BookingConfirmedState" o-- "open_loyalty::Firebase::respository.dart::Repository"
+"flutter::src::widgets::framework.dart::State" <|-- "open_loyalty::view::Schedule_Warranty::components::booking_confirm.dart::_BookingConfirmedState"
+
+class "open_loyalty::view::Schedule_Warranty::components::warranty_center.dart::WarrantyCenter" {
+  -DateTime _bookingDate
+  -String _time
+  +ProductModel product
+  +_WarrantyCenterState createState()
+}
+
+"open_loyalty::view::Schedule_Warranty::components::warranty_center.dart::WarrantyCenter" o-- "open_loyalty::models::product_model.dart::ProductModel"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "open_loyalty::view::Schedule_Warranty::components::warranty_center.dart::WarrantyCenter"
+
+class "open_loyalty::view::support::ChatScreen.dart::ChatPageState" {
+  +String currentUserId
+  +List<QueryDocumentSnapshot<Object?>> listMessage
+  -int _limit
+  -int _limitIncrement
+  +String groupChatId
+  +File? imageFile
+  +bool isLoading
+  +bool isShowSticker
+  +String imageUrl
+  +TextEditingController textEditingController
+  +ScrollController listScrollController
+  +FocusNode focusNode
+  +FirebaseAuth auth
+  +ChatProvider chatProvider
+  +void initState()
+  -dynamic _scrollListener()
+  +void onFocusChange()
+  +void readLocal()
+  +Future<dynamic> getImage()
+  +void getSticker()
+  +Future<dynamic> uploadFile()
+  +void onSendMessage()
+  +Widget buildItem()
+  +bool isLastMessageLeft()
+  +bool isLastMessageRight()
+  +Future<bool> onBackPress()
+  +Widget build()
+  +Widget buildSticker()
+  +Widget buildLoading()
+  +Widget buildInput()
+  +Widget buildListMessage()
+}
+
+
+@enduml
