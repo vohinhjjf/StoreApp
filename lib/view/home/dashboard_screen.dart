@@ -8,6 +8,7 @@ import 'package:store_app/view/card/card_screen.dart';
 import 'package:store_app/view/home/dashboard_screen.dart';
 import 'package:store_app/view/support/ChatScreen.dart';
 import '../../constant.dart';
+import '../support/MessagesPage.dart';
 
 class HomeScreen extends StatefulWidget {
   String id = "";
