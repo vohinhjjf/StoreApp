@@ -45,7 +45,7 @@ class CustomerApiProvider {
 
   //get user data by User id
   Future<CustomerModel> getUserById (String id) async {
-    CustomerModel customerModel = CustomerModel();
+    CustomerModel customerModel = CustomerModel(id: user!.uid, name: 'name', number: 'number', email: 'email', image: 'image', address: 'address', birthday: 'birthday');
     var docSnapshot = await customer.doc(user!.uid).get();
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;

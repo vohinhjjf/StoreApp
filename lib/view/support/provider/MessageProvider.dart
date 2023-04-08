@@ -44,7 +44,7 @@ class MessageProvider {
       final docSnapshot = await customer.doc(list_id[i]).get();
       if (docSnapshot.exists) {
         Map<String, dynamic> data = docSnapshot.data()!;
-        name = data['information']['name'];
+        name = data['name'];
         if (textValue == name) {
           id_customer = list_id[i];
         }

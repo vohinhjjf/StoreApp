@@ -11,6 +11,7 @@ import 'package:store_app/view/login/welcome_screen.dart';
 import 'package:store_app/view/order/delivery_address.dart';
 import 'package:store_app/view/stores/stores_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:store_app/view/support/MessagesPage.dart';
 import '../support_request/support_screen.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -108,7 +109,7 @@ class _BodyState extends State<Body> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return  AccountInfoScreen();
+                                      return  MessagesPage();
                                     },
                                   ),
                                 );

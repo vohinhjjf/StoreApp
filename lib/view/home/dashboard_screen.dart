@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Widget> widgetOptions = <Widget>[
       CardScreen(id: widget.id),
       CampaignScreen(),
-      ChatPage(),
+      SizedBox(),
       AccountScreen()
     ];
     PageController pageController = PageController();
