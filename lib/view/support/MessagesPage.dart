@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -34,7 +34,7 @@ class MessagesPageState extends State<MessagesPage> {
   List<QueryDocumentSnapshot> listMessage = [];
 
   int _limit = 20;
-  int _limitIncrement = 20;
+  final int _limitIncrement = 20;
   String _textSearch = "";
   bool isLoading = false;
   bool check = false;
@@ -78,9 +78,7 @@ class MessagesPageState extends State<MessagesPage> {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('onMessage: $message');
-      if (message.notification != null) {
-
-      }
+      if (message.notification != null) {}
       return;
     });
 
@@ -99,7 +97,7 @@ class MessagesPageState extends State<MessagesPage> {
 
   void scrollListener() {
     if (listScrollController.offset >=
-        listScrollController.position.maxScrollExtent &&
+            listScrollController.position.maxScrollExtent &&
         !listScrollController.position.outOfRange) {
       setState(() {
         _limit += _limitIncrement;
@@ -114,19 +112,14 @@ class MessagesPageState extends State<MessagesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Hỗ trợ khách hàng",
-          style: TextStyle(color: ColorConstants.primaryColor),
-        ),
-        centerTitle: true,
-      ),
       body: WillPopScope(
+        onWillPop: onBackPress,
         child: Stack(
           children: <Widget>[
             // List
             Column(
               children: [
+                buildAppBar(),
                 buildSearchBar(),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -139,7 +132,7 @@ class MessagesPageState extends State<MessagesPage> {
                       if (snapshot.hasData) {
                         if ((snapshot.data?.docs.length ?? 0) > 0) {
                           return ListView.builder(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             itemBuilder: (context, index) => buildItem(
                                 context, snapshot.data?.docs[index], index),
                             itemCount: snapshot.data?.docs.length,
@@ -151,7 +144,7 @@ class MessagesPageState extends State<MessagesPage> {
                           );
                         }
                       } else {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(
                             color: ColorConstants.themeColor,
                           ),
@@ -165,29 +158,76 @@ class MessagesPageState extends State<MessagesPage> {
 
             // Loading
             Positioned(
-              child: isLoading ? LoadingView() : SizedBox.shrink(),
+              child: isLoading ? LoadingView() : const SizedBox.shrink(),
             )
           ],
         ),
-        onWillPop: onBackPress,
       ),
     );
   }
 
   Widget buildLoading() {
     return Positioned(
-      child: isLoading ? LoadingView() : SizedBox.shrink(),
+      child: isLoading ? LoadingView() : const SizedBox.shrink(),
+    );
+  }
+
+  Widget buildAppBar() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            const Text(
+              "Conversations",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding:
+                  const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+              height: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.pink[50],
+              ),
+              child: Row(
+                children: const <Widget>[
+                  Icon(
+                    Icons.add,
+                    color: Colors.pink,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Text(
+                    "Add New",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
   Widget buildSearchBar() {
     return Container(
       height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: ColorConstants.greyColor2,
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.search, color: ColorConstants.greyColor, size: 20),
-          SizedBox(width: 5),
+          const Icon(Icons.search, color: ColorConstants.greyColor, size: 20),
+          const SizedBox(width: 5),
           Expanded(
             child: TextFormField(
               textInputAction: TextInputAction.search,
@@ -207,12 +247,12 @@ class MessagesPageState extends State<MessagesPage> {
                   }
                 });
               },
-              decoration: InputDecoration.collapsed(
-                hintText: 'Tìm khách hàng (nhập chính xác tên)',
+              decoration: const InputDecoration.collapsed(
+                hintText: 'Tìm người dùng (nhập chính xác tên)',
                 hintStyle:
-                TextStyle(fontSize: 13, color: ColorConstants.greyColor),
+                    TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
-              style: TextStyle(fontSize: 13),
+              style: const TextStyle(fontSize: 13),
             ),
           ),
           StreamBuilder<bool>(
@@ -220,25 +260,19 @@ class MessagesPageState extends State<MessagesPage> {
               builder: (context, snapshot) {
                 return snapshot.data == true
                     ? GestureDetector(
-                    onTap: () {
-                      searchBarTec.clear();
-                      btnClearController.add(false);
-                      setState(() {
-                        _textSearch = "";
-                      });
-                    },
-                    child: Icon(Icons.clear_rounded,
-                        color: ColorConstants.greyColor, size: 20))
-                    : SizedBox.shrink();
+                        onTap: () {
+                          searchBarTec.clear();
+                          btnClearController.add(false);
+                          setState(() {
+                            _textSearch = "";
+                          });
+                        },
+                        child: const Icon(Icons.clear_rounded,
+                            color: ColorConstants.greyColor, size: 20))
+                    : const SizedBox.shrink();
               }),
         ],
       ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: ColorConstants.greyColor2,
-      ),
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
     );
   }
 
@@ -248,67 +282,11 @@ class MessagesPageState extends State<MessagesPage> {
       CustomerModel userChat = CustomerModel.fromDocument(document);
       userId = userChat.id;
       if (userChat.id == currentUserId) {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       } else {
         return Container(
+          margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
           child: TextButton(
-            child: Row(
-              children: <Widget>[
-                Image.network(
-                  userChat.image,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstants.themeColor,
-                        value: loadingProgress.expectedTotalBytes !=
-                            null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, object, stackTrace) {
-                    return const Icon(
-                      Icons.account_circle,
-                      size: 35,
-                      color: ColorConstants.greyColor,
-                    );
-                  },
-                  width: 35,
-                  height: 35,
-                  fit: BoxFit.cover,
-                ),
-                Flexible(
-                  child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            '${userChat.name ?? "ll"}',
-                            maxLines: 1,
-                            style: TextStyle(
-                                color: ColorConstants.primaryColor,
-                                fontSize: 17),
-                          ),
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.fromLTRB(10, 0, 0, 5),
-                        ),
-                        Container(
-                          child: buildListMessage(),
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        ),
-                        buildLoading(),
-                      ],
-                    ),
-                    margin: EdgeInsets.only(left: 20),
-                  ),
-                ),
-              ],
-            ),
             onPressed: () {
               if (Utilities.isKeyboardShowing()) {
                 Utilities.closeKeyboard(context);
@@ -320,8 +298,8 @@ class MessagesPageState extends State<MessagesPage> {
                   builder: (context) => ChatPage(
                     arguments: ChatPageArguments(
                       peerId: userChat.id!,
-                      peerAvatar:
-                      userChat.image ?? 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png?w=360',
+                      peerAvatar: userChat.image ??
+                          'https://cdn-icons-png.flaticon.com/512/1177/1177568.png?w=360',
                       peerNickname: userChat.name ?? 's',
                     ),
                   ),
@@ -329,20 +307,63 @@ class MessagesPageState extends State<MessagesPage> {
               );
             },
             style: ButtonStyle(
-              backgroundColor:
-              MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  ColorConstants.greyColor2.withOpacity(0.5)),
               shape: MaterialStateProperty.all<OutlinedBorder>(
-                RoundedRectangleBorder(
+                const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
             ),
+            child: Row(
+              children: <Widget>[
+                ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: userChat.image,
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) =>
+                            CircularProgressIndicator(
+                                value: downloadProgress.progress),
+                    errorWidget: (context, url, error) => const Icon(
+                      Icons.account_circle_rounded,
+                      size: 50,
+                    ),
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Flexible(
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            userChat.name,
+                            maxLines: 1,
+                            style: const TextStyle(
+                                color: ColorConstants.primaryColor,
+                                fontSize: 17),
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: buildListMessage(),
+                        ),
+                        buildLoading(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          margin: EdgeInsets.only(bottom: 10, left: 5, right: 5),
         );
       }
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 
@@ -386,100 +407,87 @@ class MessagesPageState extends State<MessagesPage> {
   Widget buildListMessage() {
     readLocal();
     print(
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
-            userId);
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$userId");
     return Flexible(
       child: groupChatId.isNotEmpty
           ? StreamBuilder<QuerySnapshot>(
-        stream: chatProvider.getChatStream(groupChatId, 20),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData) {
-            listMessage = snapshot.data!.docs;
-            print(groupChatId);
-            print("sssssssssssssssssssss" + listMessage.toString());
-            if (listMessage.isNotEmpty) {
-              if (snapshot.data?.docs[0].get("idFrom") ==
-                  "yfoznXChE5hB3ZWlW26Lq7dVnyn1") {
-                return Row(
-                  children: [
-                    Text(
-                        chatProvider
-                            .getLastMessage(
-                            snapshot.data?.docs[0])
-                            .length >=
-                            15
-                            ? "Ban: " +
-                            chatProvider
-                                .getLastMessage(
-                                snapshot.data?.docs[0])
-                                .substring(1, 15) +
-                            "..."
-                            : "Ban: " +
-                            chatProvider.getLastMessage(
-                                snapshot.data?.docs[0]),
-                        style: TextStyle(color: Colors.grey)),
-                    SizedBox(width: 10),
-                    Text(
-                      DateFormat('dd MMM kk:mm').format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                          int.parse(
-                            chatProvider.getLastMessageTime(
-                                snapshot.data?.docs[0]),
+              stream: chatProvider.getChatStream(groupChatId, 20),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  listMessage = snapshot.data!.docs;
+                  print(groupChatId);
+                  print("sssssssssssssssssssss$listMessage");
+                  if (listMessage.isNotEmpty) {
+                    if (snapshot.data?.docs[0].get("idFrom") == currentUserId) {
+                      return Row(
+                        children: [
+                          Text(
+                              chatProvider
+                                          .getLastMessage(
+                                              snapshot.data?.docs[0])
+                                          .length >=
+                                      10
+                                  ? "Ban: ${chatProvider.getLastMessage(snapshot.data?.docs[0]).substring(1, 10)}..."
+                                  : "Ban: ${chatProvider.getLastMessage(snapshot.data?.docs[0])}",
+                              style: const TextStyle(color: Colors.grey)),
+                          const Spacer(),
+                          Text(
+                            DateFormat('dd MMM kk:mm').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                int.parse(
+                                  chatProvider.getLastMessageTime(
+                                      snapshot.data?.docs[0]),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Row(
-                  children: [
-                    Text(
-                        chatProvider
-                            .getLastMessage(
-                            snapshot.data?.docs[0])
-                            .length >=
-                            15
-                            ? chatProvider
-                            .getLastMessage(
-                            snapshot.data?.docs[0])
-                            .substring(1, 15) +
-                            "..."
-                            : chatProvider
-                            .getLastMessage(snapshot.data?.docs[0]),
-                        style: TextStyle(color: Colors.grey)),
-                    SizedBox(width: 10),
-                    Text(
-                      DateFormat('dd MMM kk:mm').format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                          int.parse(
-                            chatProvider.getLastMessageTime(
-                                snapshot.data?.docs[0]),
+                        ],
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          Text(
+                              chatProvider
+                                          .getLastMessage(
+                                              snapshot.data?.docs[0])
+                                          .length >=
+                                      15
+                                  ? "${chatProvider.getLastMessage(snapshot.data?.docs[0]).substring(1, 15)}..."
+                                  : chatProvider
+                                      .getLastMessage(snapshot.data?.docs[0]),
+                              style: const TextStyle(color: Colors.grey)),
+                          const SizedBox(width: 10),
+                          Text(
+                            DateFormat('dd MMM kk:mm').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                int.parse(
+                                  chatProvider.getLastMessageTime(
+                                      snapshot.data?.docs[0]),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        ],
+                      );
+                    }
+                  } else {
+                    return const SizedBox();
+                  }
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstants.themeColor,
                     ),
-                  ],
-                );
-              }
-            } else {
-              return Text("");
-            }
-          } else {
-            return Center(
+                  );
+                }
+              },
+            )
+          : const Center(
               child: CircularProgressIndicator(
                 color: ColorConstants.themeColor,
               ),
-            );
-          }
-        },
-      )
-          : Center(
-        child: CircularProgressIndicator(
-          color: ColorConstants.themeColor,
-        ),
-      ),
+            ),
     );
   }
 }

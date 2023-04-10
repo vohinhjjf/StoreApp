@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "251921225698",
+    "firebase_url": "https://storeapp-b5b72-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "storeapp-b5b72",
     "storage_bucket": "storeapp-b5b72.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "251921225698-tk2113og24r0h1ihgu0tnlm0m0b64021.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.store_app",
+            "certificate_hash": "64e2113519b65b191ab7ef81e4aeade60a445748"
+          }
+        },
+        {
+          "client_id": "251921225698-u8i886p67avm35afk3j1qqs6ff76qsek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.store_app",
+            "certificate_hash": "f5b44ae88bfa729977bc8cdf04d8172b45e61199"
+          }
+        },
         {
           "client_id": "251921225698-p6ua9pnj3d5214ff7usc8mbtgnfml2vd.apps.googleusercontent.com",
           "client_type": 3
