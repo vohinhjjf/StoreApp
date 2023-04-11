@@ -22,8 +22,10 @@ class MessageProvider {
       return FirebaseFirestore.instance
           .collection(pathCollection)
           .limit(limit)
-          .where("name", isEqualTo: textSearch)
-          .snapshots();
+          .orderBy('name')
+      .startAt([textSearch])
+      .endAt(['$textSearch\uf8ff'])
+      .snapshots();
     } else {
       return FirebaseFirestore.instance
           .collection(pathCollection)

@@ -338,7 +338,7 @@ TextField _buildSearch(BuildContext context) {
         builder: (BuildContext context) => SearchScreen(),
       ));
     },
-    decoration: InputDecoration(
+    decoration: const InputDecoration(
       contentPadding: EdgeInsets.all(4),
       focusedBorder: border,
       enabledBorder: border,

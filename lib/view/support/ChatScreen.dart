@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -166,7 +167,8 @@ class ChatPageState extends State<ChatPage> {
                 // Text
                 ? Container(
                     padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    width: 200,
+                    constraints:
+                        const BoxConstraints(minWidth: 50, maxWidth: 200),
                     decoration: BoxDecoration(
                         color: ColorConstants.greyColor2,
                         borderRadius: BorderRadius.circular(8)),
@@ -314,7 +316,8 @@ class ChatPageState extends State<ChatPage> {
                   messageChat.type == TypeMessage.text
                       ? Container(
                           padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                          width: 200,
+                          constraints:
+                              const BoxConstraints(minWidth: 50, maxWidth: 200),
                           decoration: BoxDecoration(
                               color: ColorConstants.primaryColor,
                               borderRadius: BorderRadius.circular(8)),
@@ -478,11 +481,76 @@ class ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.arguments.peerNickname,
-          style: const TextStyle(color: ColorConstants.primaryColor),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(
+                  width: 2,
+                ),
+                ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: widget.arguments.peerAvatar,
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) =>
+                            CircularProgressIndicator(
+                                value: downloadProgress.progress),
+                    errorWidget: (context, url, error) => const Icon(
+                      Icons.account_circle_rounded,
+                      size: 50,
+                    ),
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        widget.arguments.peerNickname,
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: ColorConstants.primaryColor),
+                      ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      const Text(
+                        "Online",
+                        style: TextStyle(color: Colors.white, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.settings,
+                  color: Colors.black54,
+                ),
+              ],
+            ),
+          ),
         ),
         centerTitle: true,
+        backgroundColor: Colors.blue,
       ),
       body: WillPopScope(
         onWillPop: onBackPress,
