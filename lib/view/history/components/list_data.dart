@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:store_app/Firebase/firebase_realtime_data_service.dart';
 import 'package:store_app/constant.dart';
+import 'package:store_app/models/cart_model.dart';
 import 'package:store_app/utils/format.dart';
 import 'package:store_app/view/history/components/purchase_detail.dart';
 
@@ -62,7 +63,7 @@ class _ListDataState extends State<ListData> {
 
   Widget buildList(QuerySnapshot querySnapshot, String option) {
     return ListView(
-        padding: EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10),
         children: querySnapshot.docs.map((DocumentSnapshot document) {
           return  buildData(document,option);
         }).toList()
@@ -70,145 +71,162 @@ class _ListDataState extends State<ListData> {
   }
 
   Widget buildData(DocumentSnapshot document, String option) {
-    List<dynamic> list = document['products'];
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Card(
-          shadowColor: Colors.grey,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.grey.shade400, width: 1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          //margin: EdgeInsets.fromLTRB(5, space_height, 5, 0),
-          child: InkWell(
-            splashColor: Colors.blue.withAlpha(30),
-            onTap: () async {
+    return StreamBuilder(
+        stream: customerApiProvider.customer.doc(customerApiProvider.user!.uid)
+            .collection("purchase history").doc(document.id)
+            .collection("products").snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
+          if (snapshot.hasData) {
+            if (snapshot.data!.docs.isEmpty) {
+              return Container();
+            }
+            List<dynamic> list = snapshot.data!.docs;
+            return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Card(
+                  shadowColor: Colors.grey,
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.grey.shade400, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  //margin: EdgeInsets.fromLTRB(5, space_height, 5, 0),
+                  child: InkWell(
+                    splashColor: Colors.blue.withAlpha(30),
+                    onTap: () async {
 
-            },
-            child: Container(
-              width: 300,
-              height: 185,
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: Column(
-                crossAxisAlignment : CrossAxisAlignment.start,
-                children: [
-                  Text(widget.status,style: TextStyle(color: Colors.grey.shade700, fontSize: mFontListTile,fontWeight: FontWeight.bold)),
-                  SizedBox(height: 5,),
-                  Divider(height: 5,color: Colors.grey,),
-                  SizedBox(height: 5,),
-                  Row(
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: Image.network(
-                            document["products"][0]["productImage"],
-                            height: 100,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 10,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                document["products"][0]["productName"],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style:
-                                const TextStyle(fontSize: mFontListTile, fontWeight: FontWeight.w500),
-                              ),
-                              Text("Số lượng sản phẩm: ${list.length}",
-                                  style: TextStyle(color: Colors.grey, fontSize: mFontListTile)),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Tổng tiền: ${Format().currency(document["total"], decimal: false).replaceAll(RegExp(r','), '.')}đ',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
+                    },
+                    child: Container(
+                      width: 300,
+                      height: 185,
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: Column(
+                        crossAxisAlignment : CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.status,style: TextStyle(color: Colors.grey.shade700, fontSize: mFontListTile,fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 5,),
+                          const Divider(height: 5,color: Colors.grey,),
+                          const SizedBox(height: 5,),
+                          Row(
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: Image.network(
+                                    list[0]["productImage"],
+                                    height: 100,
                                   ),
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  OutlinedButton(
-                                    autofocus: true,
-                                    style: OutlinedButton.styleFrom(
-                                      //minimumSize: MediaQuery.of(context).size,
-                                        backgroundColor: Colors.white,
-                                        side: const BorderSide(color: mPrimaryColor, width: 1),
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: const BorderRadius.all(Radius.circular(5))
-                                        )
-                                    ),
-                                    onPressed:() {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute (builder: (BuildContext context) => PurchaseDetail(purchaseId: document.id,status: widget.status,)));
-                                    },
-                                    child: const Text(
-                                      "Xem chi tiết",
-                                      style:  TextStyle(fontSize: mFontListTile, color: mPrimaryColor),
-                                    )),
-                                  widget.status=="Đang xử lý"
-                                      ?OutlinedButton(
-                                      autofocus: true,
-                                      style: OutlinedButton.styleFrom(
-                                        //minimumSize: MediaQuery.of(context).size,
-                                          backgroundColor: Colors.white,
-                                          side: const BorderSide(color: mError, width: 1),
-                                          shape: const RoundedRectangleBorder(
-                                              borderRadius: const BorderRadius.all(Radius.circular(5))
-                                          )
+                                Expanded(
+                                  flex: 10,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        list[0]["productName"],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style:
+                                        const TextStyle(fontSize: mFontListTile, fontWeight: FontWeight.w500),
                                       ),
-                                      onPressed:() {
-                                        print(document.id);
-                                        Dialog1(
-                                            context,
-                                            document.id,
-                                            'Bạn muốn hủy đơn hàng này?',
-                                            Image(image: AssetImage(
-                                                "assets/images/cancel.png"))
-                                        );
-                                      },
-                                      child: const Text(
-                                        "Hủy đơn",
-                                        style:  TextStyle(fontSize: mFontListTile, color: mError),
-                                      ))
-                                      :OutlinedButton(
-                                      autofocus: true,
-                                      style: OutlinedButton.styleFrom(
-                                        //minimumSize: MediaQuery.of(context).size,
-                                          backgroundColor: Colors.white,
-                                          side: const BorderSide(color: mPrimaryColor, width: 1),
-                                          shape: const RoundedRectangleBorder(
-                                              borderRadius: const BorderRadius.all(Radius.circular(5))
-                                          )
+                                      Text("Số lượng sản phẩm: ${list.length}",
+                                          style: const TextStyle(color: Colors.grey, fontSize: mFontListTile)),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Tổng tiền: ${Format().currency(document["total"], decimal: false).replaceAll(RegExp(r','), '.')}đ',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
                                       ),
-                                      onPressed:() {
-                                        Dialog1(context
-                                            , document.id,
-                                            'Bạn muốn mua lại đơn hàng này?',
-                                            Image(image: AssetImage(
-                                                "assets/images/repurchase.png"))
-                                        );
-                                      },
-                                      child: const Text(
-                                        "Mua lại",
-                                        style:  TextStyle(fontSize: mFontListTile, color: mPrimaryColor),
-                                      )),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ]
-                  )
-                ],
-              ),
-            ),
-          ),
-        )
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          OutlinedButton(
+                                              autofocus: true,
+                                              style: OutlinedButton.styleFrom(
+                                                //minimumSize: MediaQuery.of(context).size,
+                                                  backgroundColor: Colors.white,
+                                                  side: const BorderSide(color: mPrimaryColor, width: 1),
+                                                  shape: const RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                                  )
+                                              ),
+                                              onPressed:() {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute (builder: (BuildContext context) => PurchaseDetail(purchaseId: document.id,status: widget.status,)));
+                                              },
+                                              child: const Text(
+                                                "Xem chi tiết",
+                                                style:  TextStyle(fontSize: mFontListTile, color: mPrimaryColor),
+                                              )),
+                                          widget.status=="Đang xử lý"
+                                              ?OutlinedButton(
+                                              autofocus: true,
+                                              style: OutlinedButton.styleFrom(
+                                                //minimumSize: MediaQuery.of(context).size,
+                                                  backgroundColor: Colors.white,
+                                                  side: const BorderSide(color: mError, width: 1),
+                                                  shape: const RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                                  )
+                                              ),
+                                              onPressed:() {
+                                                print(document.id);
+                                                Dialog1(
+                                                    context,
+                                                    document.id,
+                                                    'Bạn muốn hủy đơn hàng này?',
+                                                    const Image(image: AssetImage(
+                                                        "assets/images/cancel.png"))
+                                                );
+                                              },
+                                              child: const Text(
+                                                "Hủy đơn",
+                                                style:  TextStyle(fontSize: mFontListTile, color: mError),
+                                              ))
+                                              :OutlinedButton(
+                                              autofocus: true,
+                                              style: OutlinedButton.styleFrom(
+                                                //minimumSize: MediaQuery.of(context).size,
+                                                  backgroundColor: Colors.white,
+                                                  side: const BorderSide(color: mPrimaryColor, width: 1),
+                                                  shape: const RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                                  )
+                                              ),
+                                              onPressed:() {
+                                                Dialog1(context
+                                                    , document.id,
+                                                    'Bạn muốn mua lại đơn hàng này?',
+                                                    const Image(image: AssetImage(
+                                                        "assets/images/repurchase.png"))
+                                                );
+                                              },
+                                              child: const Text(
+                                                "Mua lại",
+                                                style:  TextStyle(fontSize: mFontListTile, color: mPrimaryColor),
+                                              )
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ]
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+            );
+          }
+          else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
     );
   }
 
@@ -220,12 +238,12 @@ class _ListDataState extends State<ListData> {
             title: Column(
               children:  [
                 image,
-                SizedBox(
+                const SizedBox(
                   height: 6,
                 ),
                 Text(
                   logan,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 16,
                   ),
@@ -284,14 +302,14 @@ class _ListDataState extends State<ListData> {
             backgroundColor: Colors.black.withOpacity(0.5),
             title: Column(
               children: [
-                Image(image: AssetImage(
+                const Image(image: AssetImage(
                     "assets/images/nutmeg.gif")),
-                SizedBox(
+                const SizedBox(
                   height: 6,
                 ),
                 Text(
                   logan,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                   ),

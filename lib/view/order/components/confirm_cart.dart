@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_app/Firebase/firebase_realtime_data_service.dart';
 import 'package:store_app/components/appbar.dart';
+import 'package:store_app/constant.dart';
 import 'package:store_app/view/campaign/components/voucher.dart';
 import 'package:store_app/view/home/dashboard_screen.dart';
 import 'package:ticketview/ticketview.dart';
@@ -151,7 +152,10 @@ class _ConfirmOrderPageWidgetState extends State<ConfirmOrderPage> with SingleTi
                   textColor: Colors.white,
                   child: const Text(
                     "Thanh toán",
-                    style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: mFontListTile,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

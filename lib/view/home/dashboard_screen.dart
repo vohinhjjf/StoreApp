@@ -40,53 +40,53 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     PageController pageController = PageController();
     return Scaffold(
-              body: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade200,
-                        blurStyle: BlurStyle.inner,
-                        blurRadius: 12,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                child: PageView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: pageController,
-                  children:widgetOptions,
+        body: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade200,
+                  blurStyle: BlurStyle.inner,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
                 ),
-              ),
-              bottomNavigationBar:
-              BottomBar(
-                selectedIndex: _selectedIndex,
-                onTap: (int index) {
-                  pageController.jumpToPage(index);
-                  setState(() => _selectedIndex = index);
-                },
-                items: const <BottomBarItem>[
-                  BottomBarItem(
-                    icon: Icon(Icons.home),
-                    title: Text('Trang chủ'),
-                    activeColor: mPrimaryColor,
-                  ),
-                  BottomBarItem(
-                    icon: Icon(MdiIcons.ticketPercent),
-                    title: Text('Voucher'),
-                    activeColor: mPrimaryColor,
-                  ),
-                  BottomBarItem(
-                    icon: Icon(MdiIcons.chatProcessingOutline),
-                    title: Text('Hỗ trợ'),
-                    activeColor: mPrimaryColor,
-                  ),
-                  BottomBarItem(
-                    icon: Icon(Icons.account_circle_outlined),
-                    title: Text('Tài khoản'),
-                    activeColor: mPrimaryColor,
-                  ),
-                ],
-              ),
+              ],
+            ),
+          child: PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: pageController,
+            children:widgetOptions,
+          ),
+        ),
+        bottomNavigationBar:
+        BottomBar(
+          selectedIndex: _selectedIndex,
+          onTap: (int index) {
+            pageController.jumpToPage(index);
+            setState(() => _selectedIndex = index);
+          },
+          items: const <BottomBarItem>[
+            BottomBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Trang chủ'),
+              activeColor: mPrimaryColor,
+            ),
+            BottomBarItem(
+              icon: Icon(MdiIcons.ticketPercent),
+              title: Text('Voucher'),
+              activeColor: mPrimaryColor,
+            ),
+            BottomBarItem(
+              icon: Icon(MdiIcons.chatProcessingOutline),
+              title: Text('Hỗ trợ'),
+              activeColor: mPrimaryColor,
+            ),
+            BottomBarItem(
+              icon: Icon(Icons.account_circle_outlined),
+              title: Text('Tài khoản'),
+              activeColor: mPrimaryColor,
+            ),
+          ],
+        ),
       );
   }
 }

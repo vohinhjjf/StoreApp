@@ -73,7 +73,10 @@ dependencies:
   flutter_verification_code: ^1.1.6
   ticketview: ^1.0.0
   group_list_view: ^1.1.1
-  animated_text_kit: ^4.2.2
+  flutter_rating_bar: ^4.0.1
+  video_player: ^2.6.1
+  http: ^0.13.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

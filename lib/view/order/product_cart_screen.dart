@@ -128,6 +128,11 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
                 MaterialButton(
                     color: Colors.redAccent,
+                    height: 45,
+                    shape: RoundedRectangleBorder(
+                      //side: const BorderSide(color: Colors.white, width: 2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     onPressed: () {
                       if(total == 0){
                         Dialog(context);
@@ -148,6 +153,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        fontSize: mFontListTile
                       ),
                     )
                 ),

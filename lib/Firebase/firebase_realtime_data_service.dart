@@ -13,6 +13,7 @@ import 'package:store_app/models/customer_model.dart';
 import 'package:store_app/models/product_model.dart';
 
 import '../models/request_support_model.dart';
+import '../models/review_model.dart';
 
 class CustomerApiProvider {
 
@@ -102,7 +103,7 @@ class CustomerApiProvider {
   //Product
   Future<void> addToCart(ProductModel productModel) async {
     bool check = false;
-    await cart.doc(user!.uid).collection('products').get().then((value) {
+    await cart.doc(user!.uid).collection('products').get().then((value) async {
       if(value.docs.isNotEmpty){
         for (DocumentSnapshot ds in value.docs){
           if(ds["productId"]==productModel.id){
@@ -110,10 +111,12 @@ class CustomerApiProvider {
               "amount": ds["amount"]+1,
             });
             check = true;
+            print("1");
           }
         }
         if(!check){
-          cart.doc(user!.uid).collection('products').add({
+          print("2");
+          await cart.doc(user!.uid).collection('products').add({
             'productId' : productModel.id,
             'productName' : productModel.name,
             'productImage' : productModel.image,
@@ -125,6 +128,22 @@ class CustomerApiProvider {
             'total' : productModel.amount*productModel.price,
           });
         }
+      } else {
+        print("3");
+        /*await cart.doc(user!.uid).set({
+          "total": productModel.amount*productModel.price
+        });*/
+        await cart.doc(user!.uid).collection('products').add({
+          'productId' : productModel.id,
+          'productName' : productModel.name,
+          'productImage' : productModel.image,
+          'price' : productModel.price,
+          'discountPercentage' : productModel.discountPercentage,
+          'category' : productModel.category,
+          'amount' : productModel.amount,
+          'checkbuy': productModel.checkBuy,
+          'total' : productModel.amount*productModel.price,
+        });
       }
     });
   }
@@ -334,16 +353,45 @@ class CustomerApiProvider {
       "nameRecipient": addressModel.ten,
       "phoneRecipient": addressModel.so_dien_thoai,
       "addressRecipient": "${addressModel.dia_chi}, ${addressModel.xa}, ${addressModel.huyen}, ${addressModel.tinh}",
-      "products":list_product.map((e) => e.toMap()).toList(),
+      //"products":list_product.map((e) => e.toMap()).toList(),
       "discount": discount,
       "freeship": freeship,
       "checkFreeShip": checkFreeShip,
       "checkVoucher": checkVoucher,
       "total": total
-    }).then((value) {
+    }).then((value) async {
+      for(int i =0 ; i < list_product.length ; i++) {
+        await customer.doc(user!.uid).collection('purchase history').doc(
+            value.id).collection("products").doc(list_product[i].productId)
+            .set(list_product[i].toMap2(value.id));
+      }
       deleteCart();
     });
   }
+
+  /*Future<List<CartModel>> getReceived() async {
+    List<CartModel> listNotReview = [];
+    await customer.doc(user!.uid)
+        .collection("purchase history")
+        .where("orderStatus", isEqualTo: "Đã nhận hàng")
+        .get().then((value){
+        for(int i = 0; i< value.docs.map((e) => e.id).toList().length; i++){
+          customer.doc(user!.uid)
+              .collection("purchase history").doc(value.docs.map((e) => e.id).toList()[i])
+              .collection('products').where("reviewStatus", isEqualTo: false)
+              .get().then((value){
+            if(value.docs.isNotEmpty){
+              for(var cartModel in value.docs.map((e) => CartModel.fromMap2(e)).toList()){
+                listNotReview.add(cartModel);
+              }
+
+            }
+          });
+        };
+    });
+    //print("Length: ${listId.length}");
+    return listNotReview;
+  }*/
 
   Future<void> deleteCart() async{
     await cart.doc(user!.uid).collection('products').where("checkbuy",isEqualTo: true).get().then((snapshot){
@@ -360,6 +408,49 @@ class CustomerApiProvider {
     await customer.doc(user!.uid).collection('purchase history').doc(orderId).update({
       "orderStatus":status
     });
+  }
+
+  //review
+  Future<String> uploadImageVideo(XFile media, int temp, String time) async {
+    var downloadUrl;
+    if (media != null) {
+      final _image = File(media.path);
+      if (_image != null) {
+        final firebaseStorageRef = FirebaseStorage.instance
+            .ref()
+            .child(
+            "user/${user!.uid}/review/$time/$temp"); //i is the name of the image
+        UploadTask uploadTask =
+        firebaseStorageRef.putFile(_image);
+        //repository.updateAvatar(prefs.get('ID').toString(), url)
+        TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() => null);
+        downloadUrl = await storageSnapshot.ref.getDownloadURL();
+      }
+    }
+    return downloadUrl;
+  }
+
+  Future<void> addReview(ReviewModel reviewModel, String id) async {
+    await customer.doc(user!.uid).collection('review').add(reviewModel.toMap());
+    await product.doc(reviewModel.productId).collection('review').add({
+      "userId": user!.uid,
+      'detailedReview': reviewModel.detailedReview,
+      'reviewImage': reviewModel.reviewImage,
+      'rate': reviewModel.rate,
+      'time': reviewModel.time
+    });
+    await customer.doc(user!.uid).collection('purchase history').doc(id)
+        .collection('products').doc(reviewModel.productId).update({
+      "reviewStatus": true
+    });
+  }
+
+  Future<List<ReviewModel>> getListReviewed() async {
+    var docSnapshot = await customer.doc(user!.uid).collection('review').get();
+    List<ReviewModel> listReview = docSnapshot.docs.isNotEmpty
+      ? docSnapshot.docs.map((e) => ReviewModel.fromMap(e)).toList()
+      : [];
+    return listReview;
   }
 }
 

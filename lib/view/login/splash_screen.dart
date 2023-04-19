@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_app/providers/auth_provider.dart';
 import 'package:store_app/view/home/dashboard_screen.dart';
 import 'package:store_app/view/login/welcome_screen.dart';
+
+import '../../components/text_fill/TextFill.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String id = 'splash-screen';
@@ -46,6 +47,15 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  final Shader linearGradient = const LinearGradient(
+    colors: <Color>[
+      Color(0xff56b2ea),
+      Color(0xff50addf),
+      Color(0xff3d87b3),
+      //Color(0xff3880b7),
+    ],
+  ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,15 +64,15 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/logo.png'),
-            TextLiquidFill(
+            Image.asset('assets/icons/logo.PNG'),
+            TextFill(
               text: 'eShop',
-              waveColor: Colors.lightBlue,
+              waveColor: linearGradient,
               boxBackgroundColor: Colors.white,
-              textStyle: TextStyle(
-                fontSize: 60.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Lobster"
+              textStyle: const TextStyle(
+                  fontSize: 60.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Lobster",
               ),
               boxHeight: 160.0,
             ),

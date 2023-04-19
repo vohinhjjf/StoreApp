@@ -408,7 +408,7 @@ class ListAppBar {
                       );
                     },
                     child: const Text(
-                      'TIẾP TỤC',
+                      'ĐĂNG NHẬP',
                       style: TextStyle(color: Colors.blue),
                     ),
                   ),

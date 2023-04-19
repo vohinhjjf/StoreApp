@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:store_app/constant.dart';
-import 'package:store_app/view/history/components/list_data.dart';
 
-class PurchaseHistoryScreen extends StatefulWidget {
-  final int select;
-  const PurchaseHistoryScreen({super.key, required this.select});
+import '../review/components/list_not_review.dart';
+import 'components/list_reviewed.dart';
+
+class ReviewScreen extends StatefulWidget {
+  const ReviewScreen({super.key});
 
   @override
-  _PurchaseHistoryScreenState createState() => _PurchaseHistoryScreenState();
+  _ReviewScreenState createState() => _ReviewScreenState();
 }
 
-class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen>
+class _ReviewScreenState extends State<ReviewScreen>
     with SingleTickerProviderStateMixin{
-  late TabController _tabController;
 
   @override
   void initState() {
-    _tabController = TabController(initialIndex: widget.select, length: 3, vsync: this);
     super.initState();
   }
 
@@ -25,7 +24,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen>
     return Scaffold(
       body: Scaffold(
         body: DefaultTabController(
-            length: 3,
+            length: 2,
             child: Scaffold(
               appBar: AppBar(
                 leading: IconButton(
@@ -40,57 +39,49 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen>
                 backgroundColor: Colors.white,
                 centerTitle: true,
                 title: const Text(
-                  'Đơn hàng của tôi',
+                  'Đánh giá của tôi',
                   style: TextStyle(
                     fontSize: mFontTitle,
                     color: mPrimaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                bottom: TabBar(
-                    controller: _tabController,
+                bottom: const TabBar(
                     labelColor: mPrimaryColor,
                     unselectedLabelColor: Colors.black,
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicator: BoxDecoration(
-                        /*gradient: const LinearGradient(
-                            colors: [mHighColor, mPrimaryColor]),
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.redAccent*/
+                        // gradient: const LinearGradient(
+                        //     colors: [mHighColor, mPrimaryColor]),
+                        //borderRadius: BorderRadius.circular(50),
+                        //color: Colors.redAccent,
                         border: Border(
-                            bottom: BorderSide(color: mPrimaryColor, width: 3)
+                          bottom: BorderSide(color: mPrimaryColor, width: 3)
                         )
                     ),
-                    tabs: const [
+                    tabs: [
                       Tab(
                         child: Align(
                           alignment: Alignment.center,
-                          child: Text("Đang xử lý",
-                            style: TextStyle(fontSize: 15),),
+                          child: Text("Chưa đánh giá",
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ),
                       Tab(
                         child: Align(
                           alignment: Alignment.center,
-                          child: Text("Đã nhận hàng",
-                            style: TextStyle(fontSize: 15),),
-                        ),
-                      ),
-                      Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text("Đơn đã hủy",
-                            style: TextStyle(fontSize: 15),),
+                          child: Text("Đã đánh giá",
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ),
                     ]),
               ),
-              body: TabBarView(
-                controller: _tabController,
+              body: const TabBarView(
                   children: [
-                ListData(status: "Đang xử lý"),
-                ListData(status: "Đã nhận hàng"),
-                ListData(status: "Đơn đã hủy"),
+                    ListNotReview(),
+                    ListReviewed(),
               ]),
             )
         ),

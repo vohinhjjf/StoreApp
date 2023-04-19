@@ -59,7 +59,7 @@ class _BodyState extends State<Body> {
                   color: Colors.lightBlue.shade300,
                   borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30),bottomRight: Radius.circular(30)),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: _buildSearch(context),
               ),
             ),

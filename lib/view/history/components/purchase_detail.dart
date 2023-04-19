@@ -357,7 +357,7 @@ class _PurchaseDetailState extends State<PurchaseDetail> {
               ),
               createPriceItem("Tổng tiền hàng", '${Format().currency(document["total"], decimal: false).replaceAll(RegExp(r','), '.')}đ', Colors.grey.shade700, 16),
               createPriceItem("Phí vận chuyển", '${Format().currency(35000, decimal: false).replaceAll(RegExp(r','), '.')}đ', Colors.grey.shade700, 16),
-              document["checkFreeShip"] ? createPriceItem("Giảm giá phí vận chuyển", '-${Format().currency(double.parse(document["FreeShip"])*1000, decimal: false).replaceAll(RegExp(r','), '.')}đ', Colors.teal.shade300, 16): Container(),
+              document["checkFreeShip"] ? createPriceItem("Giảm giá phí vận chuyển", '-${Format().currency(document["freeship"], decimal: false).replaceAll(RegExp(r','), '.')}đ', Colors.teal.shade300, 16): Container(),
               document["checkVoucher"] ? createPriceItem("Combo khuyến mãi", '-${Format().currency(document["discount"], decimal: false).replaceAll(RegExp(r','), '.')}đ', Colors.red, 16) : Container(),
               const SizedBox(
                 height: 8,
@@ -380,7 +380,7 @@ class _PurchaseDetailState extends State<PurchaseDetail> {
                     style: TextStyle(color: Colors.black, fontSize: 16),
                   ),
                   Text(
-                    '${Format().currency(document["total"]+35000-document["freeship"]*1000 - document["discount"], decimal: false).replaceAll(RegExp(r','), '.')}đ',
+                    '${Format().currency(document["total"]+35000-document["freeship"] - document["discount"], decimal: false).replaceAll(RegExp(r','), '.')}đ',
                     style: TextStyle(color: Colors.orange.shade700, fontSize: 16),
                   )
                 ],
