@@ -1,22 +1,22 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:store_app/constant.dart';
-import 'package:store_app/models/customer_model.dart';
-import 'package:store_app/view/support/ChatScreen.dart';
+import '../../constant.dart';
+import '../../utils/debouncer.dart';
+import '../../utils/utilities.dart';
 import 'provider/ChatProvider.dart';
 import 'provider/MessageProvider.dart';
-import 'package:store_app/utils/utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/customer_model.dart';
 import '../../components/loading_view.dart';
-import 'body.dart';
+import 'ChatScreen.dart';
 
 class MessagesPage extends StatefulWidget {
   MessagesPage({Key? key}) : super(key: key);
@@ -34,7 +34,7 @@ class MessagesPageState extends State<MessagesPage> {
   List<QueryDocumentSnapshot> listMessage = [];
 
   int _limit = 20;
-  int _limitIncrement = 20;
+  final int _limitIncrement = 20;
   String _textSearch = "";
   bool isLoading = false;
   bool check = false;
@@ -78,9 +78,7 @@ class MessagesPageState extends State<MessagesPage> {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('onMessage: $message');
-      if (message.notification != null) {
-       
-      }
+      if (message.notification != null) {}
       return;
     });
 
@@ -114,13 +112,6 @@ class MessagesPageState extends State<MessagesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Hỗ trợ khách hàng",
-          style: TextStyle(color: ColorConstants.primaryColor),
-        ),
-        centerTitle: true,
-      ),
       body: WillPopScope(
         onWillPop: onBackPress,
         child: Stack(
@@ -128,6 +119,7 @@ class MessagesPageState extends State<MessagesPage> {
             // List
             Column(
               children: [
+                buildAppBar(),
                 buildSearchBar(),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -180,6 +172,48 @@ class MessagesPageState extends State<MessagesPage> {
     );
   }
 
+  Widget buildAppBar() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            const Text(
+              "Conversations",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding:
+                  const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+              height: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.pink[50],
+              ),
+              child: Row(
+                children: const <Widget>[
+                  Icon(
+                    Icons.add,
+                    color: Colors.pink,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Text(
+                    "Add New",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget buildSearchBar() {
     return Container(
       height: 40,
@@ -214,7 +248,7 @@ class MessagesPageState extends State<MessagesPage> {
                 });
               },
               decoration: const InputDecoration.collapsed(
-                hintText: 'Tìm khách hàng (nhập chính xác tên)',
+                hintText: 'Tìm người dùng (nhập chính xác tên)',
                 hintStyle:
                     TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
@@ -245,7 +279,7 @@ class MessagesPageState extends State<MessagesPage> {
   Widget buildItem(
       BuildContext context, DocumentSnapshot? document, int index) {
     if (document != null) {
-      CustomerModel userChat = CustomerModel();
+      CustomerModel userChat = CustomerModel.fromDocument(document);
       userId = userChat.id;
       if (userChat.id == currentUserId) {
         return const SizedBox.shrink();
@@ -262,19 +296,18 @@ class MessagesPageState extends State<MessagesPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ChatPage(
-                    /*arguments: ChatPageArguments(
+                    arguments: ChatPageArguments(
                       peerId: userChat.id,
-                      peerAvatar:
-                          'https://cdn-icons-png.flaticon.com/512/1177/1177568.png?w=360',
+                      peerAvatar: userChat.image,
                       peerNickname: userChat.name,
-                    ),*/
+                    ),
                   ),
                 ),
               );
             },
             style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  ColorConstants.greyColor2.withOpacity(0.5)),
               shape: MaterialStateProperty.all<OutlinedBorder>(
                 const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -283,23 +316,29 @@ class MessagesPageState extends State<MessagesPage> {
             ),
             child: Row(
               children: <Widget>[
-                const Material(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  clipBehavior: Clip.hardEdge,
-                  child: Icon(
-                    Icons.account_circle,
-                    size: 50,
-                    color: ColorConstants.greyColor,
+                ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: userChat.image,
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) =>
+                            CircularProgressIndicator(
+                                value: downloadProgress.progress),
+                    errorWidget: (context, url, error) => const Icon(
+                      Icons.account_circle_rounded,
+                      size: 50,
+                    ),
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 Flexible(
                   child: Container(
-                    margin: const EdgeInsets.only(left: 20),
+                    margin: const EdgeInsets.only(left: 10),
                     child: Column(
                       children: <Widget>[
                         Container(
                           alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 5),
                           child: Text(
                             userChat.name,
                             maxLines: 1,
@@ -310,7 +349,6 @@ class MessagesPageState extends State<MessagesPage> {
                         ),
                         Container(
                           alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                           child: buildListMessage(),
                         ),
                         buildLoading(),
@@ -380,8 +418,7 @@ class MessagesPageState extends State<MessagesPage> {
                   print(groupChatId);
                   print("sssssssssssssssssssss$listMessage");
                   if (listMessage.isNotEmpty) {
-                    if (snapshot.data?.docs[0].get("idFrom") ==
-                        "yfoznXChE5hB3ZWlW26Lq7dVnyn1") {
+                    if (snapshot.data?.docs[0].get("idFrom") == currentUserId) {
                       return Row(
                         children: [
                           Text(
@@ -389,15 +426,11 @@ class MessagesPageState extends State<MessagesPage> {
                                           .getLastMessage(
                                               snapshot.data?.docs[0])
                                           .length >=
-                                      15
-                                  ? "Ban: ${chatProvider
-                                          .getLastMessage(
-                                              snapshot.data?.docs[0])
-                                          .substring(1, 15)}..."
-                                  : "Ban: ${chatProvider.getLastMessage(
-                                          snapshot.data?.docs[0])}",
+                                      10
+                                  ? "Ban: ${chatProvider.getLastMessage(snapshot.data?.docs[0]).substring(1, 10)}..."
+                                  : "Ban: ${chatProvider.getLastMessage(snapshot.data?.docs[0])}",
                               style: const TextStyle(color: Colors.grey)),
-                          const SizedBox(width: 10),
+                          const Spacer(),
                           Text(
                             DateFormat('dd MMM kk:mm').format(
                               DateTime.fromMillisecondsSinceEpoch(
@@ -419,10 +452,7 @@ class MessagesPageState extends State<MessagesPage> {
                                               snapshot.data?.docs[0])
                                           .length >=
                                       15
-                                  ? "${chatProvider
-                                          .getLastMessage(
-                                              snapshot.data?.docs[0])
-                                          .substring(1, 15)}..."
+                                  ? "${chatProvider.getLastMessage(snapshot.data?.docs[0]).substring(1, 15)}..."
                                   : chatProvider
                                       .getLastMessage(snapshot.data?.docs[0]),
                               style: const TextStyle(color: Colors.grey)),
@@ -441,7 +471,7 @@ class MessagesPageState extends State<MessagesPage> {
                       );
                     }
                   } else {
-                    return const Text("");
+                    return const SizedBox();
                   }
                 } else {
                   return const Center(

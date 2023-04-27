@@ -76,6 +76,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   video_player: ^2.6.1
   http: ^0.13.5
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:
