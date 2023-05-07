@@ -46,84 +46,86 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     PageController pageController = PageController();
     return Scaffold(
-        body: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurStyle: BlurStyle.inner,
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-          child: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: pageController,
-            children:widgetOptions,
-          ),
-        ),
-        bottomNavigationBar:
-        BottomBar(
-          selectedIndex: _selectedIndex,
-          onTap: (int index) {
-            pageController.jumpToPage(index);
-            setState(() => _selectedIndex = index);
-          },
-          items: const <BottomBarItem>[
-            BottomBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Trang chủ'),
-              activeColor: mPrimaryColor,
-            ),
-            BottomBarItem(
-              icon: Icon(MdiIcons.ticketPercent),
-              title: Text('Voucher'),
-              activeColor: mPrimaryColor,
-            ),
-            BottomBarItem(
-              icon: Icon(MdiIcons.chatProcessingOutline),
-              title: Text('Hỗ trợ'),
-              activeColor: mPrimaryColor,
-            ),
-            BottomBarItem(
-              icon: Icon(Icons.account_circle_outlined),
-              title: Text('Tài khoản'),
-              activeColor: mPrimaryColor,
+      body: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurStyle: BlurStyle.inner,
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-      );
+        child: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: pageController,
+          children: widgetOptions,
+        ),
+      ),
+      bottomNavigationBar: BottomBar(
+        selectedIndex: _selectedIndex,
+        onTap: (int index) {
+          pageController.jumpToPage(index);
+          setState(() => _selectedIndex = index);
+        },
+        items: const <BottomBarItem>[
+          BottomBarItem(
+            icon: Icon(Icons.home),
+            title: Text('Trang chủ'),
+            activeColor: mPrimaryColor,
+          ),
+          BottomBarItem(
+            icon: Icon(MdiIcons.ticketPercent),
+            title: Text('Voucher'),
+            activeColor: mPrimaryColor,
+          ),
+          BottomBarItem(
+            icon: Icon(MdiIcons.chatProcessingOutline),
+            title: Text('Hỗ trợ'),
+            activeColor: mPrimaryColor,
+          ),
+          BottomBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            title: Text('Tài khoản'),
+            activeColor: mPrimaryColor,
+          ),
+        ],
+      ),
+    );
   }
 
-  showInputNamePopup() {
-    _repository.getUserById(user!.uid).then((value) => {
-          if (value.name == '') {_displayTextInputDialog(context)}
-        });
+  void showInputNamePopup() {
+    if (user != null) {
+      _repository.getUserById(user!.uid).then((value) => {
+            if (value.name == '') {_displayTextInputDialog(context)}
+          });
+    }
   }
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(
-                'Trước khi mua sắm \nChúng tôi muốn biết tên của bạn'),
-            content: TextFormField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                  labelText: 'Nhập tên của bạn',
-                  labelStyle: TextStyle(fontSize: mFontSize),
-                  contentPadding: EdgeInsets.zero),
-            ),
-            actions: <Widget>[
-              MaterialButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: const Text('OK'),
-                onPressed: () {
-                  setState(() {
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title:
+              const Text('Trước khi mua sắm \nChúng tôi muốn biết tên của bạn'),
+          content: TextFormField(
+            controller: nameController,
+            decoration: const InputDecoration(
+                labelText: 'Nhập tên của bạn',
+                labelStyle: TextStyle(fontSize: mFontSize),
+                contentPadding: EdgeInsets.zero),
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              color: Colors.blue,
+              textColor: Colors.white,
+              child: const Text('OK'),
+              onPressed: () {
+                setState(
+                  () {
                     if (nameController.text == '') {
                       Fluttertoast.showToast(
                           msg: 'Vui lòng cung cấp thông tin',
@@ -132,18 +134,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       FirebaseFirestore.instance
                           .collection('Users')
                           .doc(user?.uid)
-                          .update({'name': nameController.text});
+                          .update({'name': nameController.text},);
                       Navigator.pop(context);
                       Fluttertoast.showToast(
                           msg: 'Cảm ơn bạn đã cung cấp thông tin',
                           backgroundColor: ColorConstants.greyColor);
                     }
-                  });
-                },
-              ),
-            ],
-          );
-        });
+                  },
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
-

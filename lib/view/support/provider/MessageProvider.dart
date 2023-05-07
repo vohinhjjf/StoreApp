@@ -1,7 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:store_app/constant.dart';
-
-import '../../../models/chat/chat_message_model.dart';
 
 class MessageProvider {
   final FirebaseFirestore firebaseFirestore;
