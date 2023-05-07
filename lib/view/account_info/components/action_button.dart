@@ -22,10 +22,10 @@ class _ActionButtonState extends State<ActionButton> {
           MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
-                side: BorderSide(color: mPrimaryColor)),
+                side: const BorderSide(color: mPrimaryColor)),
             color: mPrimaryColor,
             textColor: Colors.white,
-            child: Text('Sửa thông tin',
+            child: const Text('Sửa thông tin',
                 style: TextStyle(
                     fontSize: mFontSize, fontWeight: FontWeight.w400)),
             onPressed: () {
@@ -36,10 +36,10 @@ class _ActionButtonState extends State<ActionButton> {
           MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
-                side: BorderSide(color: Colors.deepOrange)),
+                side: const BorderSide(color: Colors.deepOrange)),
             color: Colors.deepOrange,
             textColor: Colors.white,
-            child: Text('Đổi mật khẩu',
+            child: const Text('Đổi mật khẩu',
                 style: TextStyle(
                     fontSize: mFontSize, fontWeight: FontWeight.w400)),
             onPressed: () {},

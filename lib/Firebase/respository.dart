@@ -22,12 +22,11 @@ class Repository {
         'image': ''
       });
 
-  Future<void> updateAvatar (String id, String url) =>
+  Future<void> updateAvatar(String id, String url) =>
       customerApiProvider.updateAvatar(id, url);
 
-  Future<void> updateUserData(String? id,
-      String? number,String? email,
-      String birthday, String address) =>
+  Future<void> updateUserData(String? id, String? number, String? email,
+          String birthday, String address) =>
       customerApiProvider.updateUserData({
         'id': id,
         'number': number,
@@ -40,19 +39,18 @@ class Repository {
       customerApiProvider.getUserById(id);
 
   Future<String> setAddress(AddressModel addressModel) =>
-    customerApiProvider.setAddress(addressModel);
+      customerApiProvider.setAddress(addressModel);
 
   Future<String> updateAddress(AddressModel addressModel) =>
       customerApiProvider.updateAddress(addressModel);
 
-  Future<List<AddressModel>> getAddress() =>
-    customerApiProvider.getAddress();
+  Future<List<AddressModel>> getAddress() => customerApiProvider.getAddress();
 
-  Future<AddressModel> selectAddressDefault()=>
-    customerApiProvider.selectAddressDefault();
+  Future<AddressModel> selectAddressDefault() =>
+      customerApiProvider.selectAddressDefault();
 
   Future<String> updateAddressDefault(String id) =>
-    customerApiProvider.updateAddressDefault(id);
+      customerApiProvider.updateAddressDefault(id);
 
   Future<DocumentSnapshot> checkID(String id) =>
       customerApiProvider.checkID(id);
@@ -69,14 +67,11 @@ class Repository {
   Future<void> setCheckBuy(String id, bool checkbuy) =>
       customerApiProvider.setCheckBuy(id, checkbuy);
 
-  Future<void> setTotal(double total) =>
-      customerApiProvider.setTotal(total);
+  Future<void> setTotal(double total) => customerApiProvider.setTotal(total);
 
-  Future<double> getTotal() =>
-      customerApiProvider.getTotal();
+  Future<double> getTotal() => customerApiProvider.getTotal();
 
-  Future<void> saveVoucher(String id) =>
-      customerApiProvider.saveVoucher(id);
+  Future<void> saveVoucher(String id) => customerApiProvider.saveVoucher(id);
 
   Future<List<CampaignModel>> getVoucherSaved() =>
       customerApiProvider.getVoucherSaved();
@@ -86,19 +81,28 @@ class Repository {
 
   Future<void> setStores() => customerApiProvider.setStores();
 
-  Future<bool> getCheckFreeShip() =>
-      customerApiProvider.getCheckFreeShip();
+  Future<bool> getCheckFreeShip() => customerApiProvider.getCheckFreeShip();
 
-  Future<bool> getCheckVoucher() =>
-      customerApiProvider.getCheckFreeShip();
+  Future<bool> getCheckVoucher() => customerApiProvider.getCheckFreeShip();
 
-  Future<String> getFreeShip() =>
-      customerApiProvider.getFreeShip();
+  Future<String> getFreeShip() => customerApiProvider.getFreeShip();
 
-  Future<String> getDiscount() =>
-      customerApiProvider.getDiscount();
+  Future<String> getDiscount() => customerApiProvider.getDiscount();
 
-  Future<void> addPurchaseHistory(List<CartModel> list_product,AddressModel addressModel,
-      double total, double discount, double freeship, bool checkFreeShip, bool checkVoucher) =>
-      customerApiProvider.addPurchaseHistory(list_product, addressModel, total, discount, freeship, checkFreeShip, checkVoucher);
+  Future<void> addPurchaseHistory(
+          List<CartModel> list_product,
+          AddressModel addressModel,
+          double total,
+          double discount,
+          double freeship,
+          bool checkFreeShip,
+          bool checkVoucher) =>
+      customerApiProvider.addPurchaseHistory(list_product, addressModel, total,
+          discount, freeship, checkFreeShip, checkVoucher);
+
+  Future<void> updateBlogViewCount(String id) =>
+      customerApiProvider.updateBlogViewCount(id);
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> categoryFilter(int val) =>
+      customerApiProvider.categoryFilter(val);
 }

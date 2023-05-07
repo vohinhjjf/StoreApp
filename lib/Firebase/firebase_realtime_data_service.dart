@@ -22,6 +22,7 @@ class CustomerApiProvider {
   var cart = FirebaseFirestore.instance.collection('Cart');
   var voucher = FirebaseFirestore.instance.collection('Voucher');
   var banner = FirebaseFirestore.instance.collection('Banner');
+  var blog = FirebaseFirestore.instance.collection('Blogs');
   FirebaseStorage storage = FirebaseStorage.instance;
   var string;
   //User
@@ -531,5 +532,47 @@ class CustomerApiProvider {
         ? docSnapshot.docs.map((e) => ReviewModel.fromMap(e)).toList()
         : [];
     return listReview;
+  }
+
+  Future<void> updateBlogViewCount(String id) async {
+    blog.doc(id).set(
+      {'views': FieldValue.increment(1)},
+      SetOptions(merge: true),
+    );
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> categoryFilter(val) {
+    switch (val) {
+      case 0:
+        {
+          return blog.where('active', isEqualTo: true).snapshots();
+        }
+      case 1:
+        {
+          return blog.where('category', isEqualTo: 'Đồ công nghệ').snapshots();
+        }
+      case 2:
+        {
+          return blog.where('category', isEqualTo: 'Game').snapshots();
+        }
+      case 3:
+        {
+          return blog
+              .where('category', isEqualTo: 'Thủ thuật - Hướng dẫn')
+              .snapshots();
+        }
+      case 4:
+        {
+          return blog.where('category', isEqualTo: 'Giải trí').snapshots();
+        }
+      case 5:
+        {
+          return blog.where('category', isEqualTo: 'Coding').snapshots();
+        }
+      default:
+        {
+          return blog.where('active', isEqualTo: true).snapshots();
+        }
+    }
   }
 }
