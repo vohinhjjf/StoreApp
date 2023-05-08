@@ -16,7 +16,7 @@ class CouponCard extends StatelessWidget {
   final Function(bool?)? cb_voucher;
   final Function() onclick;
 
-   CouponCard(
+   const CouponCard(
       {Key? key,
         required this.name,
         required this.voucherId,

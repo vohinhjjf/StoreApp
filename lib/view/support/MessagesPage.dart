@@ -280,6 +280,7 @@ class MessagesPageState extends State<MessagesPage> {
       BuildContext context, DocumentSnapshot? document, int index) {
     if (document != null) {
       CustomerModel userChat = CustomerModel.fromDocument(document);
+      
       userId = userChat.id;
       if (userChat.id == currentUserId) {
         return const SizedBox.shrink();
