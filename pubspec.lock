@@ -19,16 +19,14 @@ packages:
     dependency: transitive
     description:
       name: animated_checkmark
-      sha256: "878db0c6754c4145e9e17b46f20e304da060ac7a65f8ab4ab43494093f3f8443"
-      url: "https://pub.dev"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
   args:
     dependency: transitive
     description:
       name: args
-      sha256: c372bb384f273f0c2a8aaaa226dad84dc27c8519a691b888725dec59518ad53a
-      url: "https://pub.dev"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.1"
   async:
@@ -45,13 +43,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  bottom_bar:
-    dependency: "direct main"
-    description:
-      name: bottom_bar
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.3"
   cached_network_image:
     dependency: "direct main"
     description:
@@ -87,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.1"
+  chips_choice:
+    dependency: "direct main"
+    description:
+      name: chips_choice
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   clock:
     dependency: transitive
     description:
@@ -301,8 +299,7 @@ packages:
     dependency: transitive
     description:
       name: flexi_chip
-      sha256: "5942219bdbd94a7527b69eb5640e6bd05d8ec6a41a5a4a1a10ca22a5a1f41beb"
-      url: "https://pub.dev"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.8"
   flutter:
@@ -356,8 +353,7 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_markdown
-      sha256: "7b25c10de1fea883f3c4f9b8389506b54053cd00807beab69fd65c8653a2711f"
-      url: "https://pub.dev"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.14"
   flutter_plugin_android_lifecycle:
@@ -612,10 +608,9 @@ packages:
     dependency: transitive
     description:
       name: markdown
-      sha256: "8e332924094383133cee218b676871f42db2514f1f6ac617b6cf6152a7faab8e"
-      url: "https://pub.dev"
+      url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.1.0"
+    version: "7.0.1"
   matcher:
     dependency: transitive
     description:
@@ -887,6 +882,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  stylish_bottom_bar:
+    dependency: "direct main"
+    description:
+      name: stylish_bottom_bar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   synchronized:
     dependency: transitive
     description:
@@ -982,8 +984,7 @@ packages:
     dependency: transitive
     description:
       name: widget_event
-      sha256: b71014bc7d8ec85a325357e76e6b5769ee1d8a67d099a6ce5c429440a19dbf18
-      url: "https://pub.dev"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.5"
   win32:
@@ -1008,5 +1009,5 @@ packages:
     source: hosted
     version: "6.1.0"
 sdks:
-  dart: ">=2.19.0 <3.0.0"
+  dart: ">=2.18.2 <3.0.0"
   flutter: ">=3.3.0"
