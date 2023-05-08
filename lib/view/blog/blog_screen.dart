@@ -24,6 +24,16 @@ class _BlogScreenState extends State<BlogScreen> {
     'Coding', //5
   ];
 
+  final ScrollController listScrollController = ScrollController();
+  int _limit = 2;
+  final int _limitIncrement = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    listScrollController.addListener(scrollListener);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +72,8 @@ class _BlogScreenState extends State<BlogScreen> {
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _repository.categoryFilter(tag),
+                stream:
+                    _repository.categoryFilter(tag).limit(_limit).snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return const Text("Something went wrong");
@@ -72,21 +83,33 @@ class _BlogScreenState extends State<BlogScreen> {
                   }
                   if ((snapshot.data?.docs.length ?? 0) > 0) {
                     return ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(10),
-                        itemBuilder: (context, index) => BlogCard(
-                              document: snapshot.data?.docs[index],
-                            ),
-                        itemCount: snapshot.data?.docs.length);
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(10),
+                      itemBuilder: (context, index) => BlogCard(
+                        document: snapshot.data?.docs[index],
+                      ),
+                      itemCount: snapshot.data?.docs.length,
+                      controller: listScrollController,
+                    );
                   }
                   return const Text('We are updating blogs');
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void scrollListener() {
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange) {
+      setState(() {
+        _limit += _limitIncrement;
+      });
+    }
   }
 }

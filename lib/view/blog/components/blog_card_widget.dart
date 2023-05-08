@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:store_app/view/blog/blog_view/blog_view_scrren.dart';
+import 'package:store_app/view/blog/blog_view/blog_view_screen.dart';
 
 import '../../../Firebase/respository.dart';
 import '../../../models/blog_model.dart';
@@ -36,7 +36,6 @@ class BlogCard extends StatelessWidget {
           color: Colors.white,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CachedNetworkImage(
               imageUrl: blog.image,
@@ -45,57 +44,76 @@ class BlogCard extends StatelessWidget {
               },
               errorWidget: (context, url, error) {
                 return Center(
-                  child: Image.asset('assets/images/img_not_available.jpeg'),
+                  child: Image.asset('assets/images/blog_template.png'),
                 );
               },
             ),
             const SizedBox(
               height: 5,
             ),
-            Text(
-              blog.name,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Text(
-              blog.short,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: const TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.calendar_month_rounded),
-                    Text(blog.time),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.person_rounded),
-                    Text(blog.views.toString()),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.favorite_border_rounded),
-                    Text(blog.likes.toString()),
-                  ],
-                ),
-              ],
-            )
+                    Text(
+                      blog.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      blog.short,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(blog.time),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.person_rounded,
+                              color: Colors.green,
+                            ),
+                            Text(
+                              blog.views.toString(),
+                              style: const TextStyle(
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.favorite_rounded,
+                              color: Colors.red,
+                            ),
+                            Text(
+                              blog.likes.toString(),
+                              style: const TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ]),
+            ),
           ],
         ),
       ),
