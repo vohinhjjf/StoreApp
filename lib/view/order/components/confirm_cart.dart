@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_app/Firebase/firebase_realtime_data_service.dart';
 import 'package:store_app/components/appbar.dart';
@@ -10,13 +11,18 @@ import 'package:store_app/view/campaign/components/voucher.dart';
 import 'package:store_app/view/home/dashboard_screen.dart';
 import 'package:ticketview/ticketview.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:money_formatter/money_formatter.dart';
 import 'package:store_app/Firebase/respository.dart';
 import 'package:store_app/models/address_model.dart';
 import 'package:store_app/models/cart_model.dart';
 import 'package:store_app/utils/format.dart';
 import 'package:store_app/view/order/delivery_address.dart';
 import 'package:store_app/view/order/product_cart_screen.dart';
+
+import '../../../Firebase/payment/stripe_payment_service.dart';
+import '../../../providers/order_provider.dart';
+import '../../payment/create_new_card_screen.dart';
+import '../../payment/payment_home.dart';
+import '../../payment/stripe/existing-cards.dart';
 
 class ConfirmOrderPage extends StatefulWidget {
   String id;
@@ -62,6 +68,7 @@ class _ConfirmOrderPageWidgetState extends State<ConfirmOrderPage> with SingleTi
 
   @override
   Widget build(BuildContext context) {
+    final orderProvider = Provider.of<OrderProvider>(context);
     setDiscount();
     return MaterialApp(
       home: Scaffold(
@@ -221,9 +228,115 @@ class _ConfirmOrderPageWidgetState extends State<ConfirmOrderPage> with SingleTi
                         child: Icon(Icons.credit_card, color: Colors.lightBlue,),
                       ),
                     ),
-                    title: const Text('Thẻ ATM nội địa'),
+                    title: const Text('Thẻ tín dụng'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16,),
-                    onTap: (){}
+                    onTap: (){
+                      //Navigator.of(context).pop();
+                      showCreditCard(context);
+                    }
+                ),
+              ],
+            ),
+          );
+        },
+        context: (context)
+    );
+  }
+
+  showCreditCard(BuildContext context) {
+    return showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+        backgroundColor: Colors.white,
+        elevation: 2,
+        builder: (BuildContext context) {
+          return Container(
+            height: 205,
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade200, width: 2),
+                borderRadius: const BorderRadius.only(topRight: Radius.circular(16), topLeft: Radius.circular(16))),
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                    contentPadding: const EdgeInsets.all(0),
+                    leading: Container(
+                      width: 30,
+                      height: 30,
+                      child: const Center(
+                        child: Icon(Icons.add_circle, color: Colors.lightBlue,),
+                      ),
+                    ),
+                    title: const Text('Thêm thẻ'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16,),
+                    onTap: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute (
+                          builder: (BuildContext context) => CreateNewCreditCard(),
+                        ),
+                      );
+                    }
+                ),
+                Container(
+                  color: Colors.grey.shade300,
+                  height: 1,
+                  width: double.infinity,
+                ),
+                ListTile(
+                    contentPadding: const EdgeInsets.all(0),
+                    leading: Container(
+                      width: 30,
+                      height: 30,
+                      child: const Center(
+                        child: Icon(Icons.credit_card, color: Colors.lightBlue,),
+                      ),
+                    ),
+                    title: const Text('Thanh toán qua thẻ mới'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16,),
+                    onTap: () async {
+                      /*await EasyLoading.show(status: 'Vui lòng đợi...');
+                      var response = await StripeService.payWithNewCard(
+                          amount: '100', currency: 'USD');
+                      if (response.success == true) {
+                        orderProvider.success = true;
+                      }
+                      await EasyLoading.dismiss();
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(
+                        content: Text(response.message),
+                        duration: new Duration(
+                            milliseconds: response.success == true ? 1200 : 3000),
+                      ))
+                          .closed
+                          .then((_) {
+                        Navigator.pop(context);
+                      });*/
+                    }
+                ),
+                Container(
+                  color: Colors.grey.shade300,
+                  height: 1,
+                  width: double.infinity,
+                ),
+                ListTile(
+                    contentPadding: const EdgeInsets.all(0),
+                    leading: Container(
+                      width: 30,
+                      height: 30,
+                      child: const Center(
+                        child: Icon(Icons.credit_score, color: Colors.lightBlue,),
+                      ),
+                    ),
+                    title: const Text('Thanh toán qua thẻ hiện có'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16,),
+                    onTap: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute (
+                          builder: (BuildContext context) => ExistingCardsPage(),
+                        ),
+                      );
+                    }
                 ),
               ],
             ),
@@ -625,16 +738,6 @@ class _ConfirmOrderPageWidgetState extends State<ConfirmOrderPage> with SingleTi
         ),
       ),
     );
-  }
-
-  String getFormattedCurrency(double amount) {
-    MoneyFormatter fmf = MoneyFormatter(amount: amount);
-    fmf.settings!
-      ..symbol = "₹"
-      ..thousandSeparator = ","
-      ..decimalSeparator = "."
-      ..fractionDigits = 2;
-    return fmf.output.symbolOnLeft;
   }
 
   createPriceItem(String key, String value, Color color, double fontSize) {

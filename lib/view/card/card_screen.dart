@@ -67,47 +67,38 @@ class _BodyState extends State<Body> {
             Container(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 width: MediaQuery.of(context).size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 190,
-                      // ignore: missing_required_param
-                      child: StreamBuilder(
-                        stream: customerApiProvider.banner.snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-                          if(snapshot.hasData){
-                            return CarouselSlider(
-                              items: snapshot.data!.docs.map((DocumentSnapshot document) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                          image: NetworkImage(document['image']),
-                                          fit: BoxFit.cover)),
-                                );
-                              }).toList(),
-                              options: CarouselOptions(
-                                height: 180.0,
-                                enlargeCenterPage: true,
-                                autoPlay: true,
-                                aspectRatio: 16 / 9,
-                                autoPlayCurve: Curves.fastOutSlowIn,
-                                enableInfiniteScroll: true,
-                                autoPlayAnimationDuration:
-                                const Duration(milliseconds: 800),
-                                viewportFraction: 0.8,
-                              ),
-                            );
-                          }
-                          else if(snapshot.hasError){}
-                          return const Center(child: CircularProgressIndicator());
-                        },
-                      ),
-                    ),
-                  ],
+                height: 190,
+                //color: Colors.blueAccent,
+                child: StreamBuilder(
+                  stream: customerApiProvider.banner.snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+                    if(snapshot.hasData){
+                      return CarouselSlider(
+                        items: snapshot.data!.docs.map((DocumentSnapshot document) {
+                          return Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: DecorationImage(
+                                  image: NetworkImage(document['image']),
+                                  fit: BoxFit.fill
+                                )),
+                          );
+                        }).toList(),
+                        options: CarouselOptions(
+                            enlargeCenterPage: true,
+                            autoPlay: true,
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enableInfiniteScroll: true,
+                            autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
+                            viewportFraction: 0.91,
+                            enlargeFactor : 0.2
+                        ),
+                      );
+                    }
+                    else if(snapshot.hasError){}
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 )
             ),
             //Danh muc
@@ -120,7 +111,8 @@ class _BodyState extends State<Body> {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey,
-                    blurRadius: 15,
+                    blurRadius: 5,
+                    spreadRadius: 1,
                     offset: Offset(0, 6),
                   ),
                 ]
@@ -139,10 +131,10 @@ class _BodyState extends State<Body> {
                               builder: (BuildContext context) => ProductListWidget('Điện thoại','Điện Thoại', widget.id),
                             ));
                           },
-                          child: const Image(
+                          child: Image.network(
+                            'https://img.freepik.com/premium-vector/black-smartphone-isolated_175654-441.jpg?size=626&ext=jpg&ga=GA1.2.201965199.1683464414&semt=sph',
                             width: 70,
                             height: 70,
-                            image: AssetImage("assets/images/phone (2).png"),
                           ),
                         ),
                         const SizedBox(
@@ -184,10 +176,10 @@ class _BodyState extends State<Body> {
                               builder: (BuildContext context) =>  ProductListWidget('Laptop', 'Laptop',widget.id),
                             ));
                           },
-                          child:  const Image(
+                          child: Image.network(
+                            'https://img.freepik.com/free-psd/laptop-mock-up-design_1307-41.jpg?size=626&ext=jpg&ga=GA1.1.201965199.1683464414&semt=sph',
                             width: 70,
                             height: 70,
-                            image: AssetImage("assets/images/laptop.png"),
                           ),
                         ),
                         const SizedBox(
@@ -205,10 +197,10 @@ class _BodyState extends State<Body> {
                               builder: (BuildContext context) =>  ProductListWidget('Đồng hồ thông minh','Đồng Hồ Thông Minh',widget.id),
                             ));
                           },
-                          child:  const Image(
+                          child: Image.network(
+                            'https://img.freepik.com/premium-photo/black-modern-smart-watch-mockup-with-strap-white-background-3d-rendering_476612-18548.jpg?size=626&ext=jpg&ga=GA1.2.201965199.1683464414&semt=ais',
                             width: 70,
                             height: 70,
-                            image: AssetImage("assets/images/smartwatch.png"),
                           ),
                         ),
                         const SizedBox(
@@ -229,10 +221,10 @@ class _BodyState extends State<Body> {
                               builder: (BuildContext context) =>  ProductListWidget('PC-Lắp ráp', 'Máy Tính Bàn và Phụ Kiện',widget.id),
                             ));
                           },
-                          child:  const Image(
+                          child: Image.network(
+                            'https://img.freepik.com/premium-vector/modern-computer_108855-821.jpg?size=626&ext=jpg&ga=GA1.2.201965199.1683464414&semt=sph',
                             width: 70,
                             height: 70,
-                            image: AssetImage("assets/images/PC.png"),
                           ),
                         ),
                         const SizedBox(
@@ -250,10 +242,10 @@ class _BodyState extends State<Body> {
                               builder: (BuildContext context) =>  ProductListWidget('Tai nghe','Tai nghe',widget.id),
                             ));
                           },
-                          child:  const Image(
+                          child: Image.network(
+                            'https://img.freepik.com/premium-photo/black-gaming-headphone-isolated-white-background-generative-ai_834602-212.jpg?size=626&ext=jpg&ga=GA1.2.201965199.1683464414&semt=sph',
                             width: 70,
                             height: 70,
-                            image: AssetImage("assets/images/headphone.png"),
                           ),
                         ),
                         const SizedBox(

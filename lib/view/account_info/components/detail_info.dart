@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:store_app/Firebase/respository.dart';
 import 'package:store_app/constant.dart';
 import 'package:store_app/models/customer_model.dart';
-import 'package:store_app/providers/auth_provider.dart';
 
 class DetailInfo extends StatefulWidget {
   @override

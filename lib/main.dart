@@ -13,6 +13,7 @@ import 'package:store_app/view/support/MessagesPage.dart';
 import 'package:store_app/view/support/provider/ChatProvider.dart';
 import 'package:store_app/view/support/provider/MessageProvider.dart';
 
+import 'providers/order_provider.dart';
 import 'view/card/card_screen.dart';
 
 void main() async {
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: firebaseFirestore,
             firebaseStorage: firebaseStorage,
           ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => OrderProvider(),
         ),
       ],
       child: Consumer<ThemeNotifier>(
