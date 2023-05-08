@@ -23,6 +23,7 @@ class _ListReviewedState extends State<ListReviewed> {
   List<String> list_image = [];
   List<VideoPlayerController> list_video = [];
   bool loading = false;
+  bool loading_image = false;
 
   @override
   void initState() {
@@ -34,6 +35,9 @@ class _ListReviewedState extends State<ListReviewed> {
     await customerApiProvider.getListReviewed().then((value) =>
       list = value
     );
+    setState(() {
+      loading = true;
+    });
     for(var review in list){
       for(var url in review.reviewImage){
         await validateImage(url).then((value) async {
@@ -46,7 +50,7 @@ class _ListReviewedState extends State<ListReviewed> {
       }
     }
     setState(() {
-      loading = true;
+      loading_image = true;
     });
   }
 
@@ -66,8 +70,8 @@ class _ListReviewedState extends State<ListReviewed> {
   }
 
   Widget buildData(ReviewModel reviewModel) {
-    return StreamBuilder(
-        stream: customerApiProvider.product.doc(reviewModel.productId).snapshots(),
+    return FutureBuilder(
+        future: customerApiProvider.product.doc(reviewModel.productId).get(),
         builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> docSnapshot){
           if (docSnapshot.hasData) {
             if (docSnapshot.data!.exists) {
@@ -160,7 +164,7 @@ class _ListReviewedState extends State<ListReviewed> {
                               const TextStyle(fontSize: 15, color: Colors.black),
                             ),
                             //;const SizedBox(height: 5,),
-                            GridView(
+                            loading_image? GridView(
                                 padding: const EdgeInsets.all(10.0),
                                 shrinkWrap: true,
                                 primary: false,
@@ -171,7 +175,6 @@ class _ListReviewedState extends State<ListReviewed> {
                                 ),
                                 children: [
                                   ...list_image.map((data) {
-                                    //validateImage(data).then((value) => print("Type: $value}"));
                                     return Image.network(
                                       data,
                                       cacheHeight: 200,
@@ -179,7 +182,6 @@ class _ListReviewedState extends State<ListReviewed> {
                                     );
                                   }).toList(),
                                   ...list_video.map((data) {
-                                    //validateImage(data).then((value) => print("Type: $value}"));
                                     return SizedBox(
                                       height: 200,
                                       width: 200,
@@ -202,7 +204,8 @@ class _ListReviewedState extends State<ListReviewed> {
                                     );
                                   }).toList(),
                                 ]
-                            ),
+                            ):
+                            const Center(child: CircularProgressIndicator()),
                           ],
                         ),
                       ),

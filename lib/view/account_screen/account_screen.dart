@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:store_app/Firebase/respository.dart';
 import 'package:store_app/components/ThemeManager.dart';
 import 'package:store_app/providers/auth_provider.dart';
 import 'package:store_app/view/account_info/account_info_screen.dart';
