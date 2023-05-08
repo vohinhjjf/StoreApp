@@ -541,37 +541,36 @@ class CustomerApiProvider {
     );
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> categoryFilter(val) {
+  Query<Map<String, dynamic>> categoryFilter(int val) {
     switch (val) {
       case 0:
         {
-          return blog.where('active', isEqualTo: true).snapshots();
+          return blog.where('active', isEqualTo: true);
         }
       case 1:
         {
-          return blog.where('category', isEqualTo: 'Đồ công nghệ').snapshots();
+          return blog.where('category', isEqualTo: 'Đồ công nghệ');
         }
       case 2:
         {
-          return blog.where('category', isEqualTo: 'Game').snapshots();
+          return blog.where('category', isEqualTo: 'Game');
         }
+
       case 3:
         {
-          return blog
-              .where('category', isEqualTo: 'Thủ thuật - Hướng dẫn')
-              .snapshots();
+          return blog.where('category', isEqualTo: 'Thủ thuật - Hướng dẫn');
         }
       case 4:
         {
-          return blog.where('category', isEqualTo: 'Giải trí').snapshots();
+          return blog.where('category', isEqualTo: 'Giải trí');
         }
       case 5:
         {
-          return blog.where('category', isEqualTo: 'Coding').snapshots();
+          return blog.where('category', isEqualTo: 'Coding');
         }
       default:
         {
-          return blog.where('active', isEqualTo: true).snapshots();
+          return blog.where('active', isEqualTo: true);
         }
     }
   }

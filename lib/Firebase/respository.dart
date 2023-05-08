@@ -103,6 +103,6 @@ class Repository {
   Future<void> updateBlogViewCount(String id) =>
       customerApiProvider.updateBlogViewCount(id);
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> categoryFilter(int val) =>
+  Query<Map<String, dynamic>> categoryFilter(int val) =>
       customerApiProvider.categoryFilter(val);
 }
