@@ -24,13 +24,13 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
     const Tab(
       child: Text(
         "Mới nhất",
-        style: TextStyle(color: Colors.black, fontSize: subhead),
+        style: TextStyle(color: Colors.white, fontSize: subhead),
       ),
     ),
     const Tab(
       child: Text(
         "Đã đổi",
-        style: TextStyle(color: Colors.black, fontSize: subhead),
+        style: TextStyle(color: Colors.white, fontSize: subhead),
       ),
     ),
   ];
@@ -52,39 +52,33 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return DefaultTabController(
-      length: 2,
+      length: 1,
       child: Scaffold(
         backgroundColor: Colors.blueGrey[50],
         appBar: AppBar(
-          leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: mPrimaryColor,
-                size: subhead,
-              ),
-              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                  "/home", (Route<dynamic> route) => false)),
+          leading: Container(),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.lightBlue.shade300,
           bottom: TabBar(
-            labelColor: mPrimaryColor,
-            unselectedLabelColor: Colors.black,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white,
             labelStyle: const TextStyle(
               fontSize: mFontSize,
-              color: Colors.black,
+              color: Colors.white,
               fontWeight: FontWeight.w700,
             ), //For Selected tab
-            unselectedLabelStyle: const TextStyle(fontSize: 16, color: Colors.black),
-            indicatorColor: mPrimaryColor,
+            unselectedLabelStyle: const TextStyle(fontSize: 16, color: Colors.white),
+            indicatorColor: Colors.white,
+            indicatorWeight : 3.0,
             controller: _controller,
             tabs: list,
           ),
           title: const Text(
             'Mã giảm giá',
             style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontWeight: FontWeight.w500,
-                fontSize: subhead),
+                fontSize: mFontTitle),
           ),
         ),
         body: TabBarView(

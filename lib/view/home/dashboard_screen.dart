@@ -1,4 +1,3 @@
-import 'package:bottom_bar/bottom_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +7,11 @@ import 'package:store_app/view/account_screen/account_screen.dart';
 import 'package:store_app/view/campaign/campaign_screen.dart';
 import 'package:store_app/view/card/card_screen.dart';
 import 'package:store_app/view/support/MessagesPage.dart';
+import 'package:stylish_bottom_bar/model/bar_items.dart';
+import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import '../../Firebase/respository.dart';
 import '../../constant.dart';
+import '../extensions/extensions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   String id = "";
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   final _repository = Repository();
   var nameController = TextEditingController();
+  bool category = false;
 
   @override
   void initState() {
@@ -41,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Widget> widgetOptions = <Widget>[
       CardScreen(id: widget.id),
       CampaignScreen(),
+      ExtensionsScreen(),
       MessagesPage(),
       AccountScreen()
     ];
@@ -63,35 +67,67 @@ class _HomeScreenState extends State<HomeScreen> {
           children: widgetOptions,
         ),
       ),
-      bottomNavigationBar: BottomBar(
-        selectedIndex: _selectedIndex,
-        onTap: (int index) {
-          pageController.jumpToPage(index);
-          setState(() => _selectedIndex = index);
-        },
-        items: const <BottomBarItem>[
+      bottomNavigationBar: StylishBottomBar(
+        option: AnimatedBarOptions(
+          // iconSize: 32,
+          barAnimation: BarAnimation.fade,
+          iconStyle: IconStyle.animated,
+          // opacity: 0.3,
+        ),
+        items: [
           BottomBarItem(
             icon: Icon(Icons.home),
             title: Text('Trang chủ'),
-            activeColor: mPrimaryColor,
+            selectedColor: mPrimaryColor,
           ),
           BottomBarItem(
             icon: Icon(MdiIcons.ticketPercent),
             title: Text('Voucher'),
-            activeColor: mPrimaryColor,
+            selectedColor: mPrimaryColor,
+          ),
+          BottomBarItem(
+            icon: Icon(MdiIcons.ticketPercent, color: Colors.white,),
+            title: Text(''),
+            selectedColor: Colors.white,
+            unSelectedColor: Colors.white
           ),
           BottomBarItem(
             icon: Icon(MdiIcons.chatProcessingOutline),
             title: Text('Hỗ trợ'),
-            activeColor: mPrimaryColor,
+            selectedColor: mPrimaryColor,
           ),
           BottomBarItem(
             icon: Icon(Icons.account_circle_outlined),
             title: Text('Tài khoản'),
-            activeColor: mPrimaryColor,
+            selectedColor: mPrimaryColor,
           ),
         ],
+        hasNotch: true,
+        fabLocation: StylishBarFabLocation.center,
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          category = false;
+          pageController.jumpToPage(index);
+          setState(() => _selectedIndex = index);
+        },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            category = true;
+            _selectedIndex = 2;
+            pageController.jumpToPage(2);
+          });
+        },
+        backgroundColor: Colors.white,
+        child: Image.asset(
+          "assets/icons/menu.png",
+          width: 40,
+          height: 40,
+          color: category==false ? Colors.grey : null,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 

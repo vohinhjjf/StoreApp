@@ -137,7 +137,8 @@ class CreateNewCreditCardState extends State<CreateNewCreditCard> {
                               Navigator.pop(context);
                             });
                           });
-                        } else {
+                        }
+                        else {
                           print('Không hợp lệ!');
                         }
                       },

@@ -175,13 +175,13 @@ class MessagesPageState extends State<MessagesPage> {
   Widget buildAppBar() {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            const Text(
+             Text(
               "Conversations",
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.lightBlue.shade300),
             ),
             Container(
               padding:

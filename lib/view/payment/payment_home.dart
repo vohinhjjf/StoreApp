@@ -9,8 +9,6 @@ import 'create_new_card_screen.dart';
 import 'stripe/existing-cards.dart';
 
 class PaymentHome extends StatefulWidget {
-  static const String id = 'stripe-honme';
-
   PaymentHome({Key? key}) : super(key: key);
 
   @override
@@ -73,12 +71,12 @@ class PaymentHomeState extends State<PaymentHome> {
     final orderProvider = Provider.of<OrderProvider>(context);
     return Scaffold(
       appBar: ListAppBar().AppBarCart(
-          context, "Thanh toán",
+          context, "Thẻ tín dụng",
               () => Navigator.of(context).pop()
       ),
       body: Column(
         children: [
-          Material(
+          /*Material(
             elevation: 4,
             child: SizedBox(
                 height: 300,
@@ -90,29 +88,28 @@ class PaymentHomeState extends State<PaymentHome> {
                     fit: BoxFit.fill,
                   ),
                 )),
-          ),
+          ),*/
           Container(
             padding: EdgeInsets.all(20),
             child: ListView.separated(
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  Icon icon = Icon(Icons.add_circle, color: theme.primaryColor);
+                  Image image = Image.asset('assets/icons/credit-card.png');
                   Text text = Text('Thêm thẻ');
 
                   switch (index) {
                     case 0:
-                      icon = Icon(Icons.add_circle, color: theme.primaryColor);
+                      image = Image.asset('assets/icons/credit-card.png');
                       text = Text('Thêm thẻ');
                       //TODO : add new cards to firestore
                       break;
                     case 1:
-                      icon = Icon(Icons.payment_outlined,
-                          color: theme.primaryColor);
+                      image = Image.asset('assets/icons/visa.png');
                       text = Text('Thanh toán qua thẻ mới');
                       break;
                     case 2:
-                      icon = Icon(Icons.credit_card, color: theme.primaryColor);
-                      text = Text('Thanh toán qua thẻ hiện có ');
+                      image = Image.asset('assets/icons/atm-card.png');
+                      text = Text('Thanh toán qua thẻ hiện có');
                       break;
                   }
 
@@ -127,7 +124,7 @@ class PaymentHomeState extends State<PaymentHome> {
                     },
                     child: ListTile(
                       title: text,
-                      leading: icon,
+                      leading: image,
                     ),
                   );
                 },

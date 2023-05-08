@@ -13,6 +13,7 @@ import 'package:store_app/view/order/delivery_address.dart';
 import 'package:store_app/view/review/review_screen.dart';
 import 'package:store_app/view/stores/stores_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../payment/payment_home.dart';
 import '../support_request/support_screen.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -173,6 +174,30 @@ class _BodyState extends State<Body> {
                                 )),
                             const SizedBox(height: 8),
                             _buildListTile(
+                                'Địa chỉ giao hàng',
+                                Icons.location_on_rounded,
+                                '',
+                                Colors.orange,
+                                theme, onTab: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                  const DeliveryAddressPage(),
+                                ),
+                              );
+                            }),
+                            const SizedBox(height: 8),
+                            _buildListTile('Thẻ tín dụng', Icons.credit_card, '',
+                                Colors.lightGreen, theme, onTab: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                      PaymentHome(),
+                                    ),
+                                  );
+                                }),
+                            const SizedBox(height: 8),
+                            _buildListTile(
                                 'Đơn hàng của tôi',
                                 Icons.playlist_add_check_circle_sharp,
                                 '',
@@ -258,16 +283,6 @@ class _BodyState extends State<Body> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 16),
-                            _buildListTile('Blogs', Icons.newspaper_rounded, '',
-                                Colors.orange, theme, onTab: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const BlogScreen(),
-                                ),
-                              );
-                            }),
-                            const SizedBox(height: 8),
                             const Text("Cài đặt",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w400, fontSize: 20)),
@@ -290,20 +305,6 @@ class _BodyState extends State<Body> {
                                   mode = "Light";
                                 });
                               }
-                            }),
-                            const SizedBox(height: 8),
-                            _buildListTile(
-                                'Địa chỉ giao hàng',
-                                Icons.location_on_rounded,
-                                '',
-                                Colors.orange,
-                                theme, onTab: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const DeliveryAddressPage(),
-                                ),
-                              );
                             }),
                             const SizedBox(height: 8),
                             _buildListTile('Chi nhánh cửa hàng', Icons.store,

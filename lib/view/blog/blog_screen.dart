@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:chips_choice/chips_choice.dart';
+import 'package:store_app/constant.dart';
 import 'package:store_app/view/blog/components/blog_card_widget.dart';
 
 import '../../Firebase/respository.dart';
@@ -38,12 +39,13 @@ class _BlogScreenState extends State<BlogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.lightBlue.shade300,
         centerTitle: true,
         title: const Text(
           'Blogs',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: mPrimaryColor),
       ),
       body: WillPopScope(
         onWillPop: () {
