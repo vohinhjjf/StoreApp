@@ -86,6 +86,10 @@ class _BlogViewPageState extends State<BlogViewPage> {
                 physics: const NeverScrollableScrollPhysics(),
               ),
             ),
+            const Text('Bạn có thích bài viết này không?'),
+            OutlinedButton(
+                onPressed: () {},
+                child: const Icon(Icons.thumb_up_alt_outlined)),
           ],
         ),
       ),

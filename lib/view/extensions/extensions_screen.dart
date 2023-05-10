@@ -11,7 +11,6 @@ class ExtensionsScreen extends StatefulWidget {
 }
 
 class _ExtensionsScreenState extends State<ExtensionsScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -23,14 +22,16 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue.shade300,
         leading: IconButton(
-            icon: const Icon(Icons.search,color: Colors.white,),
-            onPressed: (){}
-        ),
+            icon: const Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: () {}),
         leadingWidth: 30,
         //centerTitle: true,
-        title:  TextField(
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.all(8),
+        title: TextField(
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.all(8),
             //focusedBorder: border,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
@@ -43,24 +44,22 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
             ),
             isDense: true,
             hintText: "Tìm kiếm",
-            hintStyle: const TextStyle(
+            hintStyle: TextStyle(
               fontSize: 18,
               color: Colors.grey,
             ),
             filled: true,
             fillColor: Colors.white,
           ),
-          onTap: (){
-
-          },
+          onTap: () {},
         ),
         actions: [
           IconButton(
             iconSize: 28,
-            onPressed: () async {
-
-            },
-            icon: const Icon(Icons.qr_code_2,),
+            onPressed: () async {},
+            icon: const Icon(
+              Icons.qr_code_2,
+            ),
             color: Colors.white,
           ),
         ],
@@ -69,8 +68,11 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 15,),
-            const Text('Tiện ích cho bạn',
+            const SizedBox(
+              height: 15,
+            ),
+            const Text(
+              'Tiện ích cho bạn',
               style: TextStyle(
                 fontSize: mFontTitle,
                 fontWeight: FontWeight.bold,
@@ -95,16 +97,17 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              const BlogScreen(),
+                                  const BlogScreen(),
                             ),
                           );
                         },
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.orange.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.orange.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               Icons.newspaper_rounded,
                               color: Colors.orange,
@@ -115,8 +118,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text('Blogs',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Blogs',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -132,8 +137,9 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.green.withAlpha(30)),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.green.withAlpha(30)),
                           child: Center(
                             child: Icon(
                               MdiIcons.gamepadVariant,
@@ -145,8 +151,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text('Game',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Game',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -162,9 +170,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.purpleAccent.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.purpleAccent.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               MdiIcons.stickerEmoji,
                               color: Colors.purpleAccent,
@@ -175,8 +184,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text('Sticker',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Sticker',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -192,9 +203,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.blue.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               MdiIcons.weatherCloudy,
                               color: Colors.blue,
@@ -205,8 +217,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text('Thời tiết',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Thời tiết',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -222,9 +236,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               MdiIcons.phone,
                               color: Colors.black,
@@ -235,8 +250,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text('Nạp tiền ĐT',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Nạp tiền ĐT',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -252,9 +269,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.pink.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.pink.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               MdiIcons.video,
                               color: Colors.pink,
@@ -265,12 +283,11 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text(
-                            'Mua vé\nxem phim',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),
-                          )
+                      const Text(
+                        'Mua vé\nxem phim',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -286,9 +303,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.greenAccent.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.greenAccent.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               MdiIcons.airplane,
                               color: Colors.greenAccent,
@@ -299,8 +317,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text('Vé máy bay',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Vé máy bay',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -316,9 +336,10 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: Container(
                           width: 46,
                           height: 46,
-                          decoration:
-                          BoxDecoration(shape: BoxShape.circle, color: Colors.deepPurpleAccent.withAlpha(30)),
-                          child: Center(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.deepPurpleAccent.withAlpha(30)),
+                          child: const Center(
                             child: Icon(
                               Icons.location_on_rounded,
                               color: Colors.deepPurpleAccent,
@@ -329,32 +350,34 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Container(
-                          child: const Text(
-                            'Tìm quanh\nđây',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)
+                      const Text(
+                        'Tìm quanh\nđây',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
-                ]
-            ),
+                ]),
             Container(
               height: 7,
               color: Colors.grey.shade200,
             ),
-            SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 15,
                 ),
                 Container(
                   width: 46,
                   height: 46,
-                  decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.green.withAlpha(30)),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green.withAlpha(30)),
                   child: Center(
                     child: Icon(
                       MdiIcons.gamepadVariant,
@@ -365,7 +388,8 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                 const SizedBox(
                   width: 5,
                 ),
-                const Text('Khám phá game hay',
+                const Text(
+                  'Khám phá game hay',
                   style: TextStyle(
                     fontSize: mFontListTile,
                     //fontWeight: FontWeight.bold,
@@ -374,40 +398,33 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 5,),
+            const SizedBox(
+              height: 5,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 MaterialButton(
                   onPressed: () {
-                    setState((){
-
-                    });
+                    setState(() {});
                   },
                   height: 160,
                   minWidth: 160,
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                      'assets/images/sudoku.png',
+                  child: Image.asset('assets/images/sudoku.png',
                       //color: darkGrey,
-                      height: 160
-                  ),
+                      height: 160),
                 ),
                 MaterialButton(
                     onPressed: () {
-                      setState((){
-
-                      });
+                      setState(() {});
                     },
                     height: 160,
                     minWidth: 160,
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                        'assets/images/tien_len.jpg',
+                    child: Image.asset('assets/images/tien_len.jpg',
                         //color: darkGrey,
-                        height: 155
-                    )
-                )
+                        height: 155))
               ],
             ),
           ],

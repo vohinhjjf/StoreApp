@@ -103,6 +103,12 @@ class Repository {
   Future<void> updateBlogViewCount(String id) =>
       customerApiProvider.updateBlogViewCount(id);
 
+  Future<void> increaseBlogLikeCount(String id) =>
+      customerApiProvider.increaseBlogLikeCount(id);
+
+  Future<void> decreseBlogLikeCount(String id) =>
+      customerApiProvider.decreaseBlogLikeCount(id);
+
   Query<Map<String, dynamic>> categoryFilter(int val) =>
       customerApiProvider.categoryFilter(val);
 }

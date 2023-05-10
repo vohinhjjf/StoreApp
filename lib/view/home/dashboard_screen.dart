@@ -76,29 +76,29 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         items: [
           BottomBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Trang chủ'),
+            icon: const Icon(Icons.home),
+            title: const Text('Trang chủ'),
             selectedColor: mPrimaryColor,
           ),
           BottomBarItem(
-            icon: Icon(MdiIcons.ticketPercent),
-            title: Text('Voucher'),
+            icon: const Icon(MdiIcons.ticketPercent),
+            title: const Text('Voucher'),
             selectedColor: mPrimaryColor,
           ),
           BottomBarItem(
-            icon: Icon(MdiIcons.ticketPercent, color: Colors.white,),
-            title: Text(''),
+            icon: const Icon(MdiIcons.ticketPercent, color: Colors.white,),
+            title: const Text(''),
             selectedColor: Colors.white,
             unSelectedColor: Colors.white
           ),
           BottomBarItem(
-            icon: Icon(MdiIcons.chatProcessingOutline),
-            title: Text('Hỗ trợ'),
+            icon: const Icon(MdiIcons.chatProcessingOutline),
+            title: const Text('Hỗ trợ'),
             selectedColor: mPrimaryColor,
           ),
           BottomBarItem(
-            icon: Icon(Icons.account_circle_outlined),
-            title: Text('Tài khoản'),
+            icon: const Icon(Icons.account_circle_outlined),
+            title: const Text('Tài khoản'),
             selectedColor: mPrimaryColor,
           ),
         ],
