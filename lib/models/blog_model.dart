@@ -31,4 +31,20 @@ class BlogModel {
     blog.comments = data["comments"];
     return blog;
   }
+
+  factory BlogModel.fromMap(Map<String, dynamic> json) {
+    BlogModel blog = BlogModel();
+    blog.id = json['id'];
+    blog.name = json["name"];
+    blog.author = json["Author"];
+    blog.time = json["time"];
+    blog.short = json["short"];
+    blog.image = json["image"];
+    blog.category = json["category"];
+    blog.content = json["content"];
+    blog.views = json["views"];
+    blog.likes = json["likes"];
+    blog.comments = json["comments"];
+    return blog;
+  }
 }

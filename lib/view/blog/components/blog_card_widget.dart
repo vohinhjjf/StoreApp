@@ -7,12 +7,11 @@ import '../../../Firebase/respository.dart';
 import '../../../models/blog_model.dart';
 
 class BlogCard extends StatelessWidget {
-  BlogCard({super.key, required this.document});
+  BlogCard({super.key, required this.blog});
   final _repository = Repository();
-  final DocumentSnapshot? document;
+  final BlogModel blog;
   @override
   Widget build(context) {
-    BlogModel blog = BlogModel.fromDocument(document!);
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(

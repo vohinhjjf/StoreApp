@@ -541,6 +541,20 @@ class CustomerApiProvider {
     );
   }
 
+  Future<void> increaseBlogLikeCount(String id) async {
+    blog.doc(id).set(
+      {'likes': FieldValue.increment(1)},
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> decreaseBlogLikeCount(String id) async {
+    blog.doc(id).set(
+      {'likes': FieldValue.increment(-1)},
+      SetOptions(merge: true),
+    );
+  }
+
   Query<Map<String, dynamic>> categoryFilter(int val) {
     switch (val) {
       case 0:
@@ -549,24 +563,34 @@ class CustomerApiProvider {
         }
       case 1:
         {
-          return blog.where('category', isEqualTo: 'Đồ công nghệ');
+          return blog
+              .where('category', isEqualTo: 'Đồ công nghệ')
+              .where('active', isEqualTo: true);
         }
       case 2:
         {
-          return blog.where('category', isEqualTo: 'Game');
+          return blog
+              .where('category', isEqualTo: 'Game')
+              .where('active', isEqualTo: true);
         }
 
       case 3:
         {
-          return blog.where('category', isEqualTo: 'Thủ thuật - Hướng dẫn');
+          return blog
+              .where('category', isEqualTo: 'Thủ thuật - Hướng dẫn')
+              .where('active', isEqualTo: true);
         }
       case 4:
         {
-          return blog.where('category', isEqualTo: 'Giải trí');
+          return blog
+              .where('category', isEqualTo: 'Giải trí')
+              .where('active', isEqualTo: true);
         }
       case 5:
         {
-          return blog.where('category', isEqualTo: 'Coding');
+          return blog
+              .where('category', isEqualTo: 'Coding')
+              .where('active', isEqualTo: true);
         }
       default:
         {
