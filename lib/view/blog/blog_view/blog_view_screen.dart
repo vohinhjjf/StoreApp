@@ -7,6 +7,9 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../Firebase/respository.dart';
 import '../../../models/blog_model.dart';
 import '../../../models/customer_model.dart';
+import '../../login/welcome_screen.dart';
+import 'components/comment_box_widget.dart';
+import 'components/comment_section_widget.dart';
 
 class BlogViewPage extends StatefulWidget {
   const BlogViewPage({super.key, required this.blogId});
@@ -49,16 +52,18 @@ class _BlogViewPageState extends State<BlogViewPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                CachedNetworkImage(
-                  imageUrl: blog!.image,
-                  placeholder: (context, url) {
-                    return const CircularProgressIndicator();
-                  },
-                  errorWidget: (context, url, error) {
-                    return Center(
-                      child: Image.asset('assets/images/blog_template.png'),
-                    );
-                  },
+                Align(
+                  child: CachedNetworkImage(
+                    imageUrl: blog!.image,
+                    placeholder: (context, url) {
+                      return const CircularProgressIndicator();
+                    },
+                    errorWidget: (context, url, error) {
+                      return Center(
+                        child: Image.asset('assets/images/blog_template.png'),
+                      );
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(15),
@@ -189,13 +194,56 @@ class _BlogViewPageState extends State<BlogViewPage> {
                             );
                           },
                         )
-                      : const Text(
-                          'Bạn cần đăng nhập để like bài viết này',
-                          style: TextStyle(
-                            color: Colors.grey,
+                      : TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return WelcomeScreen();
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Bạn cần đăng nhập để like và bình luận bài viết này',
+                            style: TextStyle(
+                              color: Colors.orange,
+                            ),
                           ),
                         ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        user != null
+                            ? CommentBox(
+                                image: Image.asset(
+                                  "assets/images/nothing_to_show.jpg",
+                                  height: 64,
+                                  width: 64,
+                                ),
+                                controller: TextEditingController(),
+                                onImageRemoved: () {
+                                  //on image removed
+                                },
+                                onSend: () {
+                                  //on send button pressed
+                                },
+                                inputRadius: BorderRadius.circular(16),
+                              )
+                            : const SizedBox(),
+                        const Text(
+                          'Bình luận bài viết',
+                          style: TextStyle(color: Colors.blue, fontSize: 18),
+                        ),
+                        CommentSection(),
+                        CommentSection(),
+                        CommentSection(),
+                      ]),
+                )
               ],
             );
           },
