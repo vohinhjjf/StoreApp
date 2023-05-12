@@ -5,6 +5,7 @@ import 'package:store_app/models/cart_model.dart';
 import 'package:store_app/models/customer_model.dart';
 import 'package:store_app/models/product_model.dart';
 
+import '../models/blog_model.dart';
 import '../models/request_support_model.dart';
 import 'firebase_realtime_data_service.dart';
 
@@ -111,4 +112,13 @@ class Repository {
 
   Query<Map<String, dynamic>> categoryFilter(int val) =>
       customerApiProvider.categoryFilter(val);
+
+  Future<void> addBlogLiked(String blogId) =>
+      customerApiProvider.addBlogLiked(blogId);
+
+  Future<void> removeBlogLiked(String blogId) =>
+      customerApiProvider.removeBlogLiked(blogId);
+
+  Future<void> checkIfBlogIsLiked(String blogId, bool isPostLiked) =>
+      customerApiProvider.checkIfBlogIsLiked(blogId, isPostLiked);
 }

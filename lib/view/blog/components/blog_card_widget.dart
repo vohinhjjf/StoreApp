@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app/view/blog/blog_view/blog_view_screen.dart';
 
@@ -18,7 +17,7 @@ class BlogCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (BuildContext context) {
               return BlogViewPage(
-                blog: blog,
+                blogId: blog.id,
               );
             },
           ),

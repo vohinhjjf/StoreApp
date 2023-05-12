@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app/constant.dart';
@@ -147,25 +149,29 @@ class _BlogScreenState extends State<BlogScreen> {
               //   },
               // ),
               child: NotificationListener<ScrollEndNotification>(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    if (index == _data.length) {
-                      return const SizedBox(
-                        key: ValueKey('Loader'),
-                        width: double.infinity,
-                        height: 60,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
-                    final item = _data[index];
-                    return BlogCard(
-                      blog: item,
-                    );
-                  },
-                  itemCount: _data.length + (_allFetched ? 0 : 1),
-                ),
+                child: _data.isNotEmpty
+                    ? ListView.builder(
+                        itemBuilder: (context, index) {
+                          if (index == _data.length) {
+                            return const SizedBox(
+                              key: ValueKey('Loader'),
+                              width: double.infinity,
+                              height: 60,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          final item = _data[index];
+                          return BlogCard(
+                            blog: item,
+                          );
+                        },
+                        itemCount: _data.length + (_allFetched ? 0 : 1),
+                      )
+                    : Center(
+                        child:
+                            Image.asset('assets/images/nothing_to_show.jpg')),
                 onNotification: (scrollEnd) {
                   if (scrollEnd.metrics.atEdge &&
                       scrollEnd.metrics.pixels > 0) {

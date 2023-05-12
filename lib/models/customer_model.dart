@@ -8,30 +8,22 @@ class CustomerModel {
   late String email;
   late String address;
   late String image;
+  late List<String> likeBkogs;
 
-  CustomerModel(
-      {required this.id,
-      required this.name,
-      required this.number,
-      required this.email,
-      required this.image,
-      required this.address,
-      required this.birthday});
+  CustomerModel();
 
   factory CustomerModel.fromDocument(DocumentSnapshot doc) {
-    String email = "";
-    String number = "";
-    String address = "";
-    String birthday = "";
+    CustomerModel customer = CustomerModel();
 
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return CustomerModel(
-        id: doc.id,
-        name: data['name'] as String,
-        birthday: birthday,
-        email: email,
-        image: data['image'] as String,
-        number: number,
-        address: address);
+
+    customer.id = doc.id;
+    customer.name = data['name'] as String;
+    customer.birthday = data['birthday'] as String;
+    customer.email = data['email'] as String;
+    customer.image = data['image'] as String;
+    customer.number = data['number'] as String;
+    customer.address = data['address'] as String;
+    return customer;
   }
 }
