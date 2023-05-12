@@ -7,6 +7,8 @@ import 'package:store_app/constant.dart';
 import 'package:store_app/models/customer_model.dart';
 
 class DetailInfo extends StatefulWidget {
+  const DetailInfo({super.key});
+
   @override
   _DetailInfoState createState() => _DetailInfoState();
 }
