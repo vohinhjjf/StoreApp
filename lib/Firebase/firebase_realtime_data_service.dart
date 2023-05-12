@@ -47,14 +47,7 @@ class CustomerApiProvider {
 
   //get user data by User id
   Future<CustomerModel> getUserById(String id) async {
-    CustomerModel customerModel = CustomerModel(
-        id: user!.uid,
-        name: 'name',
-        number: 'number',
-        email: 'email',
-        image: 'image',
-        address: 'address',
-        birthday: 'birthday');
+    CustomerModel customerModel = CustomerModel();
     var docSnapshot = await customer.doc(user!.uid).get();
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
@@ -65,6 +58,7 @@ class CustomerApiProvider {
       customerModel.email = data["email"];
       customerModel.address = data["address"];
       customerModel.image = data['image'];
+      customerModel.likeBkogs = data['likedBlogs'].cast<String>() ?? <String>[];
     }
     return customerModel;
   }
@@ -539,6 +533,7 @@ class CustomerApiProvider {
       {'views': FieldValue.increment(1)},
       SetOptions(merge: true),
     );
+    print(id);
   }
 
   Future<void> increaseBlogLikeCount(String id) async {
@@ -553,6 +548,28 @@ class CustomerApiProvider {
       {'likes': FieldValue.increment(-1)},
       SetOptions(merge: true),
     );
+  }
+
+  Future<void> addBlogLiked(String blogId) async {
+    customer.doc(user?.uid).update({
+      "likedBlogs": FieldValue.arrayUnion([blogId]),
+    });
+  }
+
+  Future<void> removeBlogLiked(String blogId) async {
+    customer.doc(user?.uid).update({
+      "likedBlogs": FieldValue.arrayRemove([blogId]),
+    });
+  }
+
+  Future<void> checkIfBlogIsLiked(String blogId, bool isPostLiked) async {
+    var doc = customer.doc(user?.uid).get();
+    var data = await doc;
+    if (data.data()!["likedBlogs"].contains(blogId)) {
+      isPostLiked = true;
+    } else {
+      isPostLiked = false;
+    }
   }
 
   Query<Map<String, dynamic>> categoryFilter(int val) {

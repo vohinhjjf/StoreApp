@@ -51,7 +51,7 @@ class _DetailInfoState extends State<DetailInfo> {
                 return const Text('Error');
               } else if (snapshot.hasData) {
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: ListView(
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,

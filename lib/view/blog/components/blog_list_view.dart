@@ -52,25 +52,27 @@ class _BlogListViewState extends State<BlogListView> {
           return Future.value(true);
         },
         child: NotificationListener<ScrollEndNotification>(
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              if (index == _data.length) {
-                return const SizedBox(
-                  key: ValueKey('Loader'),
-                  width: double.infinity,
-                  height: 60,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-              final item = _data[index];
-              return BlogCard(
-                blog: item,
-              );
-            },
-            itemCount: _data.length + (_allFetched ? 0 : 1),
-          ),
+          child: _data.isNotEmpty
+              ? ListView.builder(
+                  itemBuilder: (context, index) {
+                    if (index == _data.length) {
+                      return const SizedBox(
+                        key: ValueKey('Loader'),
+                        width: double.infinity,
+                        height: 60,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final item = _data[index];
+                    return BlogCard(
+                      blog: item,
+                    );
+                  },
+                  itemCount: _data.length + (_allFetched ? 0 : 1),
+                )
+              : Center(child: Image.asset('assets/images/nothing_to_show.jpg')),
           onNotification: (scrollEnd) {
             if (scrollEnd.metrics.atEdge && scrollEnd.metrics.pixels > 0) {
               _fetchFirebaseData();
