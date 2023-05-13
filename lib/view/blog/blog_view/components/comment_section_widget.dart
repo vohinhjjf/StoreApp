@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:store_app/view/blog/blog_view/components/comment_reply_screen.dart';
 
 import '../../../../Firebase/respository.dart';
 import '../../../../models/comment_model.dart';
 
 class CommentSection extends StatelessWidget {
-  CommentSection({super.key, required this.json});
+  CommentSection(
+      {super.key,
+      required this.json,
+      required this.isReplyView,
+      required this.replyCount});
   final Map<String, dynamic> json;
   final _repository = Repository();
+  final bool isReplyView;
+  final int replyCount;
 
   @override
   Widget build(BuildContext context) {
@@ -58,52 +65,68 @@ class CommentSection extends StatelessWidget {
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _repository.increaseCommentLikeCount(
-                          comment.postId, json);
-                    },
-                    child: Row(
+              isReplyView
+                  ? const SizedBox()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          comment.likes.toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.blue),
+                        const SizedBox(
+                          width: 20,
                         ),
-                        const Icon(Icons.favorite_rounded, color: Colors.blue)
+                        InkWell(
+                          onTap: () {
+                            _repository.increaseCommentLikeCount(
+                                comment.postId, json);
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                comment.likes.toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              const Icon(Icons.favorite_rounded,
+                                  color: Colors.blue)
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 100,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return CommentReplyPage(
+                                    comment: comment,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                '${replyCount.toString()} Replies',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              SizedBox(
+                                width: 1,
+                              ),
+                              Icon(Icons.arrow_downward_rounded,
+                                  color: Colors.blue)
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 100,
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Row(
-                      children: const [
-                        Text(
-                          'Replies',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.blue),
-                        ),
-                        SizedBox(
-                          width: 1,
-                        ),
-                        Icon(Icons.arrow_downward_rounded, color: Colors.blue)
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                ],
-              )
+                    )
             ],
           ),
         ],

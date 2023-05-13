@@ -8,19 +8,22 @@ class CommentModel {
   String? image;
   late String time;
   int likes;
-  List<CommentModel>? replies;
+  List<String>? replies;
+  String? parentId;
 
-  CommentModel(
-      {required this.id,
-      required this.userId,
-      required this.userName,
-      required this.userImage,
-      required this.postId,
-      required this.content,
-      this.image,
-      this.likes = 0,
-      this.replies,
-      required this.time});
+  CommentModel({
+    required this.id,
+    required this.userId,
+    required this.userName,
+    required this.userImage,
+    required this.postId,
+    required this.content,
+    required this.time,
+    this.image,
+    this.likes = 0,
+    this.replies,
+    this.parentId,
+  });
 
   factory CommentModel.fromMap(Map<String, dynamic> json) {
     CommentModel commentModel = CommentModel(
@@ -33,7 +36,8 @@ class CommentModel {
       image: json["image"],
       time: json["time"],
       likes: json['likes'],
-      replies: json['replies'].cast<CommentModel>(),
+      replies: json['replies'].cast<String>(),
+      parentId: json["parentId"],
     );
 
     return commentModel;
@@ -51,6 +55,7 @@ class CommentModel {
       'time': time,
       'likes': likes,
       'replies': replies,
+      'parentId': parentId
     };
   }
 }

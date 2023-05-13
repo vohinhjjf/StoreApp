@@ -6,6 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:store_app/models/comment_model.dart';
 
 import '../../../Firebase/respository.dart';
+import '../../../constant.dart';
 import '../../../models/blog_model.dart';
 import '../../../models/customer_model.dart';
 import '../../login/welcome_screen.dart';
@@ -37,6 +38,15 @@ class _BlogViewPageState extends State<BlogViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.lightBlue.shade300,
+        centerTitle: true,
+        title: const Text(
+          'Blog Detail',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: mPrimaryColor),
+      ),
       body: SingleChildScrollView(
         physics: const ScrollPhysics(),
         child: StreamBuilder(
@@ -49,12 +59,16 @@ class _BlogViewPageState extends State<BlogViewPage> {
           }),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(child: Text("Something went wrong"));
+              return Center(
+                child: Image.asset('assets/images/nothing_to_show.jpg'),
+              );
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-            List<dynamic> commentList = blog!.comments;
+            List<dynamic> commentList = blog!.comments
+                .where((element) => element['parentId'] == null)
+                .toList();
             commentList.sort((a, b) => a['time'].compareTo(b['time']));
             return Column(
               mainAxisSize: MainAxisSize.min,
@@ -193,7 +207,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                     Text(
                                       snapshot.data!.likeBkogs
                                               .contains(widget.blogId)
-                                          ? 'Bạn và ${blog!.likes.toString()} người khác đã thích bài viết này'
+                                          ? 'Bạn và những người khác đã thích bài viết này : ${blog!.likes.toString()} lượt thích'
                                           : '${blog!.likes.toString()} người khác đã thích bài viết này',
                                       style: const TextStyle(
                                         color: Colors.grey,
@@ -245,7 +259,8 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                   //on image removed
                                 },
                                 onSend: () {
-                                  CommentModel comment = CommentModel(
+                                  if (commentsController.text.isNotEmpty) {
+                                    CommentModel comment = CommentModel(
                                       id: DateTime.now().toString(),
                                       userId: user!.uid,
                                       content: commentsController.text,
@@ -254,12 +269,15 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                       userName: userName,
                                       userImage: userImage,
                                       likes: 0,
-                                      replies: []);
-                                  FocusManager.instance.primaryFocus?.unfocus();
+                                      replies: [],
+                                    );
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
 
-                                  _repository.addComment(
-                                      widget.blogId, comment.toMap());
-                                  commentsController.clear();
+                                    _repository.addComment(
+                                        widget.blogId, comment.toMap());
+                                    commentsController.clear();
+                                  }
                                 },
                                 inputRadius: BorderRadius.circular(16),
                               )
@@ -267,10 +285,18 @@ class _BlogViewPageState extends State<BlogViewPage> {
                         ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: blog!.comments.length,
+                            itemCount: commentList.length,
                             itemBuilder: (context, index) {
                               return CommentSection(
                                 json: commentList.reversed.toList()[index],
+                                isReplyView: false,
+                                replyCount: blog!.comments
+                                    .where((i) =>
+                                        i['parentId'] ==
+                                        commentList.reversed.toList()[index]
+                                            ['id'])
+                                    .toList()
+                                    .length,
                               );
                             }),
                       ]),
