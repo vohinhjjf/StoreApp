@@ -581,8 +581,21 @@ class CustomerApiProvider {
   }
 
   Future<void> removeComment(String blogId, var commentData) async {
-    blog.doc(blogId).set(
-      {"comments": FieldValue.arrayRemove([commentData])},
+    blog.doc(blogId).update(
+      {
+        "comments": FieldValue.arrayRemove([commentData])
+      },
+    );
+  }
+
+  Future<void> increaseCommentLikeCount(String blogId, var comment) async {
+    final dummy = comment;
+    removeComment(blogId, comment);
+    dummy['likes'] = dummy['likes'] + 1;
+    blog.doc(blogId).update(
+      {
+        'comments': FieldValue.arrayUnion([dummy])
+      },
     );
   }
 

@@ -33,7 +33,7 @@ class CommentModel {
       image: json["image"],
       time: json["time"],
       likes: json['likes'],
-     
+      replies: json['replies'].cast<CommentModel>(),
     );
 
     return commentModel;
@@ -48,7 +48,9 @@ class CommentModel {
       'postId': postId,
       'content': content,
       'image': image,
-      'time': time
+      'time': time,
+      'likes': likes,
+      'replies': replies,
     };
   }
 }

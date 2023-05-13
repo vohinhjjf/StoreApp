@@ -54,6 +54,8 @@ class _BlogViewPageState extends State<BlogViewPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+            List<dynamic> commentList = blog!.comments;
+            commentList.sort((a, b) => a['time'].compareTo(b['time']));
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +142,8 @@ class _BlogViewPageState extends State<BlogViewPage> {
                             }
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
                             userName = snapshot.data!.name;
                             userImage = snapshot.data!.image;
@@ -243,14 +246,15 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                 },
                                 onSend: () {
                                   CommentModel comment = CommentModel(
-                                    id: '1',
-                                    userId: user!.uid,
-                                    content: commentsController.text,
-                                    postId: widget.blogId,
-                                    time: '12/122/12',
-                                    userName: userName,
-                                    userImage: userImage,
-                                  );
+                                      id: DateTime.now().toString(),
+                                      userId: user!.uid,
+                                      content: commentsController.text,
+                                      postId: widget.blogId,
+                                      time: DateTime.now().toString(),
+                                      userName: userName,
+                                      userImage: userImage,
+                                      likes: 0,
+                                      replies: []);
                                   FocusManager.instance.primaryFocus?.unfocus();
 
                                   _repository.addComment(
@@ -266,7 +270,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                             itemCount: blog!.comments.length,
                             itemBuilder: (context, index) {
                               return CommentSection(
-                                json: blog!.comments.reversed.toList()[index],
+                                json: commentList.reversed.toList()[index],
                               );
                             }),
                       ]),
