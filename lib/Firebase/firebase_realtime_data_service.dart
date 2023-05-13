@@ -572,6 +572,33 @@ class CustomerApiProvider {
     }
   }
 
+  Future<void> addComment(String blogId, var commentData) async {
+    blog.doc(blogId).update(
+      {
+        "comments": FieldValue.arrayUnion([commentData])
+      },
+    );
+  }
+
+  Future<void> removeComment(String blogId, var commentData) async {
+    blog.doc(blogId).update(
+      {
+        "comments": FieldValue.arrayRemove([commentData])
+      },
+    );
+  }
+
+  Future<void> increaseCommentLikeCount(String blogId, var comment) async {
+    final dummy = comment;
+    removeComment(blogId, comment);
+    dummy['likes'] = dummy['likes'] + 1;
+    blog.doc(blogId).update(
+      {
+        'comments': FieldValue.arrayUnion([dummy])
+      },
+    );
+  }
+
   Query<Map<String, dynamic>> categoryFilter(int val) {
     switch (val) {
       case 0:

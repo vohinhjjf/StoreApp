@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:store_app/models/comment_model.dart';
 
 import '../../../Firebase/respository.dart';
+import '../../../constant.dart';
 import '../../../models/blog_model.dart';
 import '../../../models/customer_model.dart';
 import '../../login/welcome_screen.dart';
@@ -24,6 +26,9 @@ class _BlogViewPageState extends State<BlogViewPage> {
   late bool isPostLiked = true;
   User? user = FirebaseAuth.instance.currentUser;
   BlogModel? blog;
+  TextEditingController commentsController = TextEditingController();
+  String userName = '';
+  String userImage = '';
 
   @override
   void initState() {
@@ -33,7 +38,17 @@ class _BlogViewPageState extends State<BlogViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.lightBlue.shade300,
+        centerTitle: true,
+        title: const Text(
+          'Blog Detail',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: mPrimaryColor),
+      ),
       body: SingleChildScrollView(
+        physics: const ScrollPhysics(),
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('Blogs')
@@ -44,12 +59,19 @@ class _BlogViewPageState extends State<BlogViewPage> {
           }),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(child: Text("Something went wrong"));
+              return Center(
+                child: Image.asset('assets/images/nothing_to_show.jpg'),
+              );
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+            List<dynamic> commentList = blog!.comments
+                .where((element) => element['parentId'] == null)
+                .toList();
+            commentList.sort((a, b) => a['time'].compareTo(b['time']));
             return Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Align(
@@ -134,8 +156,11 @@ class _BlogViewPageState extends State<BlogViewPage> {
                             }
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
+                            userName = snapshot.data!.name;
+                            userImage = snapshot.data!.image;
                             return Column(
                               children: [
                                 Column(
@@ -182,7 +207,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                     Text(
                                       snapshot.data!.likeBkogs
                                               .contains(widget.blogId)
-                                          ? 'Bạn và ${blog!.likes.toString()} người khác đã thích bài viết này'
+                                          ? 'Bạn và những người khác đã thích bài viết này : ${blog!.likes.toString()} lượt thích'
                                           : '${blog!.likes.toString()} người khác đã thích bài viết này',
                                       style: const TextStyle(
                                         color: Colors.grey,
@@ -218,6 +243,10 @@ class _BlogViewPageState extends State<BlogViewPage> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        const Text(
+                          'Bình luận bài viết',
+                          style: TextStyle(color: Colors.blue, fontSize: 18),
+                        ),
                         user != null
                             ? CommentBox(
                                 image: Image.asset(
@@ -225,25 +254,53 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                   height: 64,
                                   width: 64,
                                 ),
-                                controller: TextEditingController(),
+                                controller: commentsController,
                                 onImageRemoved: () {
                                   //on image removed
                                 },
                                 onSend: () {
-                                  //on send button pressed
+                                  if (commentsController.text.isNotEmpty) {
+                                    CommentModel comment = CommentModel(
+                                      id: DateTime.now().toString(),
+                                      userId: user!.uid,
+                                      content: commentsController.text,
+                                      postId: widget.blogId,
+                                      time: DateTime.now().toString(),
+                                      userName: userName,
+                                      userImage: userImage,
+                                      likes: 0,
+                                      replies: [],
+                                    );
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+
+                                    _repository.addComment(
+                                        widget.blogId, comment.toMap());
+                                    commentsController.clear();
+                                  }
                                 },
                                 inputRadius: BorderRadius.circular(16),
                               )
                             : const SizedBox(),
-                        const Text(
-                          'Bình luận bài viết',
-                          style: TextStyle(color: Colors.blue, fontSize: 18),
-                        ),
-                        CommentSection(),
-                        CommentSection(),
-                        CommentSection(),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: commentList.length,
+                            itemBuilder: (context, index) {
+                              return CommentSection(
+                                json: commentList.reversed.toList()[index],
+                                isReplyView: false,
+                                replyCount: blog!.comments
+                                    .where((i) =>
+                                        i['parentId'] ==
+                                        commentList.reversed.toList()[index]
+                                            ['id'])
+                                    .toList()
+                                    .length,
+                              );
+                            }),
                       ]),
-                )
+                ),
               ],
             );
           },

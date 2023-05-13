@@ -121,4 +121,13 @@ class Repository {
 
   Future<void> checkIfBlogIsLiked(String blogId, bool isPostLiked) =>
       customerApiProvider.checkIfBlogIsLiked(blogId, isPostLiked);
+
+  Future<void> addComment(String blogId, var commentData) =>
+      customerApiProvider.addComment(blogId, commentData);
+
+  Future<void> removeComment(String blogId, var commentData) =>
+      customerApiProvider.removeComment(blogId, commentData);
+
+  Future<void> increaseCommentLikeCount(String blogId, var comment) =>
+      customerApiProvider.increaseCommentLikeCount(blogId, comment);
 }
