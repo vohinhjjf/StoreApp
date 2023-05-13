@@ -572,6 +572,20 @@ class CustomerApiProvider {
     }
   }
 
+  Future<void> addComment(String blogId, var commentData) async {
+    blog.doc(blogId).update(
+      {
+        "comments": FieldValue.arrayUnion([commentData])
+      },
+    );
+  }
+
+  Future<void> removeComment(String blogId, var commentData) async {
+    blog.doc(blogId).set(
+      {"comments": FieldValue.arrayRemove([commentData])},
+    );
+  }
+
   Query<Map<String, dynamic>> categoryFilter(int val) {
     switch (val) {
       case 0:

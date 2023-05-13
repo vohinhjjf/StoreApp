@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../../../../models/comment_model.dart';
+
 class CommentSection extends StatelessWidget {
-  const CommentSection({super.key});
+  const CommentSection({super.key, required this.json});
+  final Map<String, dynamic> json;
 
   @override
   Widget build(BuildContext context) {
+    final CommentModel comment = CommentModel.fromMap(json);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-            backgroundImage:
-                Image.asset('assets/images/nothing_to_show.jpg').image,
+            backgroundImage: Image.network(comment.userImage).image,
           ),
           const SizedBox(
             width: 5,
@@ -24,16 +27,20 @@ class CommentSection extends StatelessWidget {
                 color: const Color(0xffEDEDED),
                 borderRadius: BorderRadius.circular(20)),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Text('Trung Nguyên', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(comment.userName,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     const Text(' • '),
-                    Text('14/20/03', style: TextStyle(fontSize: 12 ,color: Colors.grey)),
+                    Text(comment.time,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey)),
                   ],
                 ),
                 Text(
-                  'comment content dhifhiasdfsa sadsa adasdasdasd\ndsfsdfsdfsdfdsf \ndfsdfdsfsdfsdfer',
+                  comment.content,
                   maxLines: 25,
                 )
               ],

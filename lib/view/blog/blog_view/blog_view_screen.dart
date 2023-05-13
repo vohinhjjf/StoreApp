@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:store_app/models/comment_model.dart';
 
 import '../../../Firebase/respository.dart';
 import '../../../models/blog_model.dart';
@@ -24,6 +25,9 @@ class _BlogViewPageState extends State<BlogViewPage> {
   late bool isPostLiked = true;
   User? user = FirebaseAuth.instance.currentUser;
   BlogModel? blog;
+  TextEditingController commentsController = TextEditingController();
+  String userName = '';
+  String userImage = '';
 
   @override
   void initState() {
@@ -34,6 +38,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const ScrollPhysics(),
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('Blogs')
@@ -50,6 +55,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
               return const Center(child: CircularProgressIndicator());
             }
             return Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Align(
@@ -136,6 +142,8 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                 ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             }
+                            userName = snapshot.data!.name;
+                            userImage = snapshot.data!.image;
                             return Column(
                               children: [
                                 Column(
@@ -218,6 +226,10 @@ class _BlogViewPageState extends State<BlogViewPage> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        const Text(
+                          'Bình luận bài viết',
+                          style: TextStyle(color: Colors.blue, fontSize: 18),
+                        ),
                         user != null
                             ? CommentBox(
                                 image: Image.asset(
@@ -225,25 +237,40 @@ class _BlogViewPageState extends State<BlogViewPage> {
                                   height: 64,
                                   width: 64,
                                 ),
-                                controller: TextEditingController(),
+                                controller: commentsController,
                                 onImageRemoved: () {
                                   //on image removed
                                 },
                                 onSend: () {
-                                  //on send button pressed
+                                  CommentModel comment = CommentModel(
+                                    id: '1',
+                                    userId: user!.uid,
+                                    content: commentsController.text,
+                                    postId: widget.blogId,
+                                    time: '12/122/12',
+                                    userName: userName,
+                                    userImage: userImage,
+                                  );
+                                  FocusManager.instance.primaryFocus?.unfocus();
+
+                                  _repository.addComment(
+                                      widget.blogId, comment.toMap());
+                                  commentsController.clear();
                                 },
                                 inputRadius: BorderRadius.circular(16),
                               )
                             : const SizedBox(),
-                        const Text(
-                          'Bình luận bài viết',
-                          style: TextStyle(color: Colors.blue, fontSize: 18),
-                        ),
-                        CommentSection(),
-                        CommentSection(),
-                        CommentSection(),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: blog!.comments.length,
+                            itemBuilder: (context, index) {
+                              return CommentSection(
+                                json: blog!.comments.reversed.toList()[index],
+                              );
+                            }),
                       ]),
-                )
+                ),
               ],
             );
           },

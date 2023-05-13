@@ -63,6 +63,7 @@ class _CommentBoxState extends State<CommentBox> {
                 contentPadding: EdgeInsets.only(right: 90),
                 filled: true,
               ),
+              
             ),
             Positioned(
                 bottom: 0,
