@@ -25,9 +25,4 @@ const List<BlogCategoryModel> categories = [
       id: 4, title: 'Giải trí', imageUrl: 'assets/images/c4_blog_category.jpg'),
   BlogCategoryModel(
       id: 5, title: 'Coding', imageUrl: 'assets/images/c5_blog_category.jpg'),
-  // BlogCategoryModel(id: 'c6', title: 'Exotic', imageUrl: 'assets/images/blog_template.png'),
-  // BlogCategoryModel(id: 'c7', title: 'Breakfast', imageUrl: 'assets/images/blog_template.png'),
-  // BlogCategoryModel(id: 'c8', title: 'Asian', imageUrl: 'assets/images/blog_template.png'),
-  // BlogCategoryModel(id: 'c9', title: 'French', imageUrl: 'assets/images/blog_template.png'),
-  // BlogCategoryModel(id: 'c10', title: 'Summer', imageUrl: 'assets/images/blog_template.png'),
 ];

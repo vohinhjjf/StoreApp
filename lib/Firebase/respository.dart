@@ -5,8 +5,6 @@ import 'package:store_app/models/cart_model.dart';
 import 'package:store_app/models/customer_model.dart';
 import 'package:store_app/models/product_model.dart';
 
-import '../models/blog_model.dart';
-import '../models/request_support_model.dart';
 import 'firebase_realtime_data_service.dart';
 
 class Repository {
@@ -20,7 +18,8 @@ class Repository {
         'email': '',
         'birthday': '',
         'address': '',
-        'image': ''
+        'image': '',
+        'likedBlogs': [],
       });
 
   Future<void> updateAvatar(String id, String url) =>

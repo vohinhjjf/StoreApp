@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 class CommentBox extends StatefulWidget {
-  final Widget image;
+  final Widget? image;
   final TextEditingController controller;
   final BorderRadius inputRadius;
-  final void Function() onSend, onImageRemoved;
+  final void Function() onSend, onImageRemoved, onPickImage;
 
   const CommentBox(
       {super.key,
-      required this.image,
+      this.image,
       required this.controller,
       required this.inputRadius,
       required this.onSend,
-      required this.onImageRemoved});
+      required this.onImageRemoved,
+      required this.onPickImage});
 
   @override
   State<CommentBox> createState() => _CommentBoxState();
@@ -30,13 +31,9 @@ class _CommentBoxState extends State<CommentBox> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Divider(
-          height: 1,
-          color: Colors.grey[300],
-          thickness: 1,
-        ),
         const SizedBox(height: 20),
         if (image != null)
           _removable(
@@ -63,7 +60,6 @@ class _CommentBoxState extends State<CommentBox> {
                 contentPadding: EdgeInsets.only(right: 90),
                 filled: true,
               ),
-              
             ),
             Positioned(
                 bottom: 0,
@@ -75,7 +71,7 @@ class _CommentBoxState extends State<CommentBox> {
                     IconButton(
                       icon: const Icon(Icons.camera_alt),
                       color: Colors.blue,
-                      onPressed: widget.onSend,
+                      onPressed: widget.onPickImage,
                     ),
                     IconButton(
                       icon: const Icon(Icons.send, color: Colors.blue),
@@ -85,58 +81,30 @@ class _CommentBoxState extends State<CommentBox> {
                 ))
           ]),
         )
-        // TextFormField(
-        //   controller: widget.controller,
-        //   maxLength: 500,
-        //   minLines: 1,
-        //   maxLines: 25,
-        //   decoration: InputDecoration(
-        //     suffixIcon: Row(
-        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-        //         IconButton(
-        //           icon: const Icon(
-        //             Icons.image,
-        //             color: Colors.blue,
-        //           ),
-        //           onPressed: widget.onSend,
-        //         ),
-        //         IconButton(
-        //           icon: const Icon(
-        //             Icons.send,
-        //             color: Colors.blue,
-        //           ),
-        //           onPressed: widget.onSend,
-        //         ),
-        //       ],
-        //     ),
-        //     filled: true,
-        //     border: OutlineInputBorder(
-        //       borderSide: BorderSide.none,
-        //       borderRadius: widget.inputRadius,
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }
 
   Widget _removable(BuildContext context, Widget child) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: [
-        child,
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            setState(() {
-              image = null;
-              widget.onImageRemoved();
-            });
-          },
-        )
-      ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
+          child,
+          IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              setState(() {
+                image = null;
+                widget.onImageRemoved();
+              });
+            },
+          )
+        ],
+      ),
     );
   }
 
