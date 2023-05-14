@@ -109,11 +109,12 @@ class _CommentReplyPageState extends State<CommentReplyPage> {
                                   _repository.addComment(
                                       widget.comment.postId, comment.toMap());
                                   commentsController.clear();
-                                  setState(() {
-                                    if (image != null) {
+                                  if (image != null) {
+                                    setState(() {
                                       image = null;
-                                    }
-                                  });
+                                      downloadUrl = null;
+                                    });
+                                  }
                                 }
                               },
                               inputRadius: BorderRadius.circular(16),
