@@ -320,11 +320,12 @@ class _BlogViewPageState extends State<BlogViewPage> {
                           _repository.addComment(
                               widget.blogId, comment.toMap());
                           commentsController.clear();
-                          setState(() {
-                            if (image != null) {
+                          if (image != null) {
+                            setState(() {
                               image = null;
-                            }
-                          });
+                              downloadUrl = null;
+                            });
+                          }
                         }
                       },
                       inputRadius: BorderRadius.circular(16),
