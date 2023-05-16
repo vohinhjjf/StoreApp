@@ -33,6 +33,7 @@ class _BlogViewPageState extends State<BlogViewPage> {
   @override
   void initState() {
     super.initState();
+    getDataUser();
   }
 
   @override
@@ -159,8 +160,6 @@ class _BlogViewPageState extends State<BlogViewPage> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            userName = snapshot.data!.name;
-                            userImage = snapshot.data!.image;
                             return Column(
                               children: [
                                 Column(
@@ -249,37 +248,11 @@ class _BlogViewPageState extends State<BlogViewPage> {
                         ),
                         user != null
                             ? CommentBox(
-                                image: Image.asset(
-                                  "assets/images/nothing_to_show.jpg",
-                                  height: 64,
-                                  width: 64,
-                                ),
-                                controller: commentsController,
-                                onImageRemoved: () {
-                                  //on image removed
-                                },
-                                onSend: () {
-                                  if (commentsController.text.isNotEmpty) {
-                                    CommentModel comment = CommentModel(
-                                      id: DateTime.now().toString(),
-                                      userId: user!.uid,
-                                      content: commentsController.text,
-                                      postId: widget.blogId,
-                                      time: DateTime.now().toString(),
-                                      userName: userName,
-                                      userImage: userImage,
-                                      likes: 0,
-                                      replies: [],
-                                    );
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-
-                                    _repository.addComment(
-                                        widget.blogId, comment.toMap());
-                                    commentsController.clear();
-                                  }
-                                },
                                 inputRadius: BorderRadius.circular(16),
+                                blogId: blog!.id,
+                                controller: commentsController,
+                                userImage: userImage,
+                                userName: userName,
                               )
                             : const SizedBox(),
                         ListView.builder(
@@ -307,5 +280,17 @@ class _BlogViewPageState extends State<BlogViewPage> {
         ),
       ),
     );
+  }
+
+  getDataUser() {
+    _repository.getUserById(user!.uid).then((value) => {
+          if (mounted)
+            {
+              setState(() {
+                userName = value.name;
+                userImage = value.image;
+              })
+            }
+        });
   }
 }

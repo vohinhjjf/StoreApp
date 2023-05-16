@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:store_app/view/blog/blog_view/components/comment_reply_screen.dart';
@@ -6,15 +7,16 @@ import '../../../../Firebase/respository.dart';
 import '../../../../models/comment_model.dart';
 
 class CommentSection extends StatelessWidget {
+  final Map<String, dynamic> json;
+  final _repository = Repository();
+  final bool isReplyView;
+  final int replyCount;
+
   CommentSection(
       {super.key,
       required this.json,
       required this.isReplyView,
       required this.replyCount});
-  final Map<String, dynamic> json;
-  final _repository = Repository();
-  final bool isReplyView;
-  final int replyCount;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +64,26 @@ class CommentSection extends StatelessWidget {
                       comment.content,
                       maxLines: 25,
                     ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    comment.image != null
+                        ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                              imageUrl: comment.image!,
+                              placeholder: (context, url) {
+                                return const CircularProgressIndicator();
+                              },
+                              errorWidget: (context, url, error) {
+                                return Center(
+                                  child: Image.asset(
+                                      'assets/images/nothing_to_show.jpg'),
+                                );
+                              },
+                            ),
+                        )
+                        : const SizedBox.shrink()
                   ],
                 ),
               ),
@@ -114,10 +136,10 @@ class CommentSection extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 1,
                               ),
-                              Icon(Icons.arrow_downward_rounded,
+                              const Icon(Icons.arrow_downward_rounded,
                                   color: Colors.blue)
                             ],
                           ),

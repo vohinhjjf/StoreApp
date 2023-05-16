@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:store_app/view/blog/blog_view/components/comment_section_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -68,34 +73,11 @@ class _CommentReplyPageState extends State<CommentReplyPage> {
                       ),
                       user != null
                           ? CommentBox(
-                              image: Image.asset(
-                                "assets/images/nothing_to_show.jpg",
-                                height: 64,
-                                width: 64,
-                              ),
                               controller: commentsController,
-                              onImageRemoved: () {
-                                //on image removed
-                              },
-                              onSend: () {
-                                if (commentsController.text.isNotEmpty) {
-                                  CommentModel comment = CommentModel(
-                                      id: DateTime.now().toString(),
-                                      userId: user!.uid,
-                                      content: commentsController.text,
-                                      postId: widget.comment.postId,
-                                      time: DateTime.now().toString(),
-                                      userName: widget.comment.userName,
-                                      userImage: widget.comment.userImage,
-                                      likes: 0,
-                                      replies: [],
-                                      parentId: widget.comment.id);
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  _repository.addComment(
-                                      widget.comment.postId, comment.toMap());
-                                  commentsController.clear();
-                                }
-                              },
+                              blogId: widget.comment.postId,
+                              userImage: widget.comment.userImage,
+                              userName: widget.comment.userName,
+                              parentId: widget.comment.id,
                               inputRadius: BorderRadius.circular(16),
                             )
                           : const SizedBox(),

@@ -19,7 +19,7 @@ class BlogScreen extends StatefulWidget {
 class _BlogScreenState extends State<BlogScreen> {
   bool _allFetched = false;
   bool _isLoading = false;
-  List<BlogModel> _data = [];
+  final List<BlogModel> _data = [];
   DocumentSnapshot? _lastDocument;
   static const PAGE_SIZE = 3;
 
