@@ -1,19 +1,30 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../../Firebase/respository.dart';
+import '../../../../models/comment_model.dart';
 
 class CommentBox extends StatefulWidget {
-  final Widget? image;
   final TextEditingController controller;
   final BorderRadius inputRadius;
-  final void Function() onSend, onImageRemoved, onPickImage;
+  final String blogId;
+  final String userName;
+  final String userImage;
+  String? parentId;
 
-  const CommentBox(
+  CommentBox(
       {super.key,
-      this.image,
       required this.controller,
       required this.inputRadius,
-      required this.onSend,
-      required this.onImageRemoved,
-      required this.onPickImage});
+      required this.blogId,
+      required this.userName,
+      required this.userImage,
+      this.parentId});
 
   @override
   State<CommentBox> createState() => _CommentBoxState();
@@ -21,10 +32,13 @@ class CommentBox extends StatefulWidget {
 
 class _CommentBoxState extends State<CommentBox> {
   Widget? image;
+  User? user = FirebaseAuth.instance.currentUser;
+  final _repository = Repository();
+  File? imageFile;
+  String? downloadUrl;
 
   @override
   void initState() {
-    image = widget.image;
     super.initState();
   }
 
@@ -71,12 +85,43 @@ class _CommentBoxState extends State<CommentBox> {
                     IconButton(
                       icon: const Icon(Icons.camera_alt),
                       color: Colors.blue,
-                      onPressed: widget.onPickImage,
+                      onPressed: () {
+                        pickImage();
+                      },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.send, color: Colors.blue),
-                      onPressed: widget.onSend,
-                    ),
+                        icon: const Icon(Icons.send, color: Colors.blue),
+                        onPressed: () {
+                          if (widget.controller.text.isNotEmpty) {
+                            CommentModel comment = CommentModel(
+                                id: DateTime.now().toString(),
+                                userId: user!.uid,
+                                content: widget.controller.text,
+                                postId: widget.blogId,
+                                time: DateTime.now().toString(),
+                                userName: widget.userName,
+                                userImage: widget.userImage,
+                                likes: 0,
+                                replies: [],
+                                image: downloadUrl,
+                                parentId: widget.parentId);
+                            FocusManager.instance.primaryFocus?.unfocus();
+
+                            _repository.addComment(
+                                widget.blogId, comment.toMap());
+                            widget.controller.clear();
+                            if (imageFile == null) {
+                              setState(() {
+                                downloadUrl = null;
+                              });
+                            } else {
+                              setState(() {
+                                imageFile = null;
+                                image = null;
+                              });
+                            }
+                          }
+                        }),
                   ],
                 ))
           ]),
@@ -99,7 +144,7 @@ class _CommentBoxState extends State<CommentBox> {
             onPressed: () {
               setState(() {
                 image = null;
-                widget.onImageRemoved();
+                imageFile = null;
               });
             },
           )
@@ -116,5 +161,37 @@ class _CommentBoxState extends State<CommentBox> {
         child: image,
       ),
     );
+  }
+
+  uploadImage() async {
+    if (imageFile != null) {
+      final firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child("user/${user!.uid}/comments/${DateTime.now()}");
+      UploadTask uploadTask = firebaseStorageRef.putFile(imageFile!);
+      //repository.updateAvatar(prefs.get('ID').toString(), url)
+      TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() => null);
+      setState(
+          () async => downloadUrl = await storageSnapshot.ref.getDownloadURL());
+    }
+  }
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) {
+        return;
+      }
+
+      final imageTemporary = File(image.path);
+      setState(() {
+        imageFile = imageTemporary;
+        this.image = Image.file(imageFile!, width: 96, height: 96);
+      });
+      uploadImage();
+      print(image.path);
+    } on PlatformException catch (e) {
+      print('Failed to pick image');
+    }
   }
 }

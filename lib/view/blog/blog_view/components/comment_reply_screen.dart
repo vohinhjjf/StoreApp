@@ -28,9 +28,6 @@ class _CommentReplyPageState extends State<CommentReplyPage> {
   User? user = FirebaseAuth.instance.currentUser;
   TextEditingController commentsController = TextEditingController();
   BlogModel? blog;
-  File? image;
-  String? downloadUrl;
-  Image? i;
 
   @override
   Widget build(BuildContext context) {
@@ -76,51 +73,12 @@ class _CommentReplyPageState extends State<CommentReplyPage> {
                       ),
                       user != null
                           ? CommentBox(
-                              image: image != null
-                                  ? Image.file(
-                                      image!,
-                                      height: 96,
-                                      width: 96,
-                                    )
-                                  : i,
                               controller: commentsController,
-                              onImageRemoved: () {
-                                setState(() {
-                                  if (image != null) {
-                                    image = null;
-                                  }
-                                });
-                              },
-                              onSend: () {
-                                if (commentsController.text.isNotEmpty) {
-                                  CommentModel comment = CommentModel(
-                                      id: DateTime.now().toString(),
-                                      userId: user!.uid,
-                                      content: commentsController.text,
-                                      postId: widget.comment.postId,
-                                      time: DateTime.now().toString(),
-                                      userName: widget.comment.userName,
-                                      userImage: widget.comment.userImage,
-                                      likes: 0,
-                                      replies: [],
-                                      image: downloadUrl,
-                                      parentId: widget.comment.id);
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  _repository.addComment(
-                                      widget.comment.postId, comment.toMap());
-                                  commentsController.clear();
-                                  if (image != null) {
-                                    setState(() {
-                                      image = null;
-                                      downloadUrl = null;
-                                    });
-                                  }
-                                }
-                              },
+                              blogId: widget.comment.postId,
+                              userImage: widget.comment.userImage,
+                              userName: widget.comment.userName,
+                              parentId: widget.comment.id,
                               inputRadius: BorderRadius.circular(16),
-                              onPickImage: () {
-                                pickImage();
-                              },
                             )
                           : const SizedBox(),
                       const SizedBox(
@@ -147,34 +105,5 @@ class _CommentReplyPageState extends State<CommentReplyPage> {
                 }),
           ),
         ));
-  }
-
-  uploadImage() async {
-    if (image != null) {
-      final firebaseStorageRef = FirebaseStorage.instance
-          .ref()
-          .child("user/${user!.uid}/comments/${DateTime.now()}");
-      UploadTask uploadTask = firebaseStorageRef.putFile(image!);
-      //repository.updateAvatar(prefs.get('ID').toString(), url)
-      TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() => null);
-      setState(
-          () async => downloadUrl = await storageSnapshot.ref.getDownloadURL());
-    }
-  }
-
-  Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) {
-        return;
-      }
-
-      final imageTemporary = File(image.path);
-      setState(() => this.image = imageTemporary);
-      uploadImage();
-      print(image.path);
-    } on PlatformException catch (e) {
-      print('Failed to pick image');
-    }
   }
 }
