@@ -348,6 +348,7 @@ class MessagesPageState extends State<MessagesPage> {
                                 fontSize: 17),
                           ),
                         ),
+                        SizedBox(height: 5,),
                         Container(
                           alignment: Alignment.centerLeft,
                           child: buildListMessage(),

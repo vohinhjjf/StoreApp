@@ -493,8 +493,8 @@ class ChatPageState extends State<ChatPage> {
                     Navigator.pop(context);
                   },
                   icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
+                    Icons.arrow_back_ios_rounded,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(
@@ -529,7 +529,7 @@ class ChatPageState extends State<ChatPage> {
                         style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: ColorConstants.primaryColor),
+                            color: Colors.white),
                       ),
                       const SizedBox(
                         height: 6,
@@ -543,14 +543,14 @@ class ChatPageState extends State<ChatPage> {
                 ),
                 const Icon(
                   Icons.settings,
-                  color: Colors.black54,
+                  color: Colors.white,
                 ),
               ],
             ),
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: mPrimaryColor,
       ),
       body: WillPopScope(
         onWillPop: onBackPress,

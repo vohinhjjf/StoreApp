@@ -23,6 +23,12 @@ class GameScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.greenAccent,
         title: user != null ? getPoint() : const Text('Mini Game'),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -69,8 +75,22 @@ class GameScreen extends StatelessWidget {
     return FutureBuilder(
         future:
             FirebaseFirestore.instance.collection('Users').doc(user?.uid).get(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
+        builder: (context,AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+          if(snapshot.hasData){
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  snapshot.data!['redeemPoint'].toString(),
+                  style: const TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+                const Icon(Icons.diamond, color: Colors.blue),
+              ],
+            );
+          }
+          else if (snapshot.hasError) {
             return const Text(
               '0',
               style: TextStyle(
@@ -79,17 +99,8 @@ class GameScreen extends StatelessWidget {
               ),
             );
           }
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                (snapshot.data as DocumentSnapshot)['redeemPoint'].toString(),
-                style: const TextStyle(
-                  color: Colors.blue,
-                ),
-              ),
-              const Icon(Icons.diamond, color: Colors.blue),
-            ],
+          return Center(
+            child: CircularProgressIndicator(),
           );
         });
   }
