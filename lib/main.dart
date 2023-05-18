@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_app/components/ThemeManager.dart';
+import 'package:store_app/mini_game_module/model/player_model.dart';
 import 'package:store_app/view/account_screen/account_screen.dart';
 import 'package:store_app/view/home/dashboard_screen.dart';
 import 'package:store_app/view/login/splash_screen.dart';
@@ -13,6 +15,7 @@ import 'package:store_app/view/support/MessagesPage.dart';
 import 'package:store_app/view/support/provider/ChatProvider.dart';
 import 'package:store_app/view/support/provider/MessageProvider.dart';
 
+import 'mini_game_module/model/game_model.dart';
 import 'providers/order_provider.dart';
 import 'view/card/card_screen.dart';
 
@@ -54,6 +57,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => OrderProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => Game('+'),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => Player(),
         ),
       ],
       child: Consumer<ThemeNotifier>(
