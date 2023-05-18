@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../constant.dart';
+import '../../mini_game_module/view/game_screen.dart';
 import '../blog/blog_screen.dart';
 
 class ExtensionsScreen extends StatefulWidget {
@@ -134,16 +135,24 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                             builder: (BuildContext context) => ProductListWidget('Điện thoại','Điện Thoại', widget.id),
                           ));*/
                         },
-                        child: Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.green.withAlpha(30)),
-                          child: Center(
-                            child: Icon(
-                              MdiIcons.gamepadVariant,
-                              color: Colors.green.shade400,
+                        child: GestureDetector(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                   GameScreen(),
+                            ),
+                          ),
+                          child: Container(
+                            width: 46,
+                            height: 46,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.green.withAlpha(30)),
+                            child: Center(
+                              child: Icon(
+                                MdiIcons.gamepadVariant,
+                                color: Colors.green.shade400,
+                              ),
                             ),
                           ),
                         ),

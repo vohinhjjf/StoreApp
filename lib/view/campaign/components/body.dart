@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -11,14 +12,19 @@ import 'package:store_app/constant.dart';
 import 'package:store_app/models/campaign_model.dart';
 
 class Body extends StatefulWidget {
+  const Body({super.key});
+
   @override
-  _BodyState createState() => _BodyState();
+  State<Body> createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
   final customerApiProvider = CustomerApiProvider();
   late TabController _controller;
   final Repository _repository = Repository();
+  User? user = FirebaseAuth.instance.currentUser;
+  bool isExchanged = false;
+  int point = 0;
 
   List<Widget> list = [
     const Tab(
@@ -40,7 +46,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
     _controller =
         TabController(length: list.length, vsync: this, initialIndex: 0);
     _controller.addListener(() {
-      setState((){
+      setState(() {
         _controller =
             TabController(length: list.length, vsync: this, initialIndex: 0);
         print("Selected Index: ${_controller.index}");
@@ -67,9 +73,10 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ), //For Selected tab
-            unselectedLabelStyle: const TextStyle(fontSize: 16, color: Colors.white),
+            unselectedLabelStyle:
+                const TextStyle(fontSize: 16, color: Colors.white),
             indicatorColor: Colors.white,
-            indicatorWeight : 3.0,
+            indicatorWeight: 3.0,
             controller: _controller,
             tabs: list,
           ),
@@ -85,8 +92,10 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
           controller: _controller,
           children: [
             StreamBuilder(
-              stream: customerApiProvider.voucher.where("active", isEqualTo: true).snapshots(),
-              builder: (context,AsyncSnapshot<QuerySnapshot> snapshot) {
+              stream: customerApiProvider.voucher
+                  .where("active", isEqualTo: true)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.docs.isEmpty) {
                     return Center(
@@ -109,7 +118,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                       ),
                     );
                   }
-                  return buildList(snapshot.data!,"Mới nhất");
+                  return buildList(snapshot.data!, "Mới nhất");
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 }
@@ -118,7 +127,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
             ),
             FutureBuilder(
               future: _repository.getVoucherSaved(),
-              builder: (context,AsyncSnapshot<List<CampaignModel>> snapshot) {
+              builder: (context, AsyncSnapshot<List<CampaignModel>> snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.isEmpty) {
                     return Center(
@@ -128,8 +137,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                             height: size.height * 0.2,
                           ),
                           const Padding(
-                            padding:
-                            EdgeInsets.symmetric(horizontal: 40.0),
+                            padding: EdgeInsets.symmetric(horizontal: 40.0),
                             child: Text(
                                 "Hãy dùng điểm để đổi lấy các khuyến mãi giá trị nào !",
                                 textAlign: TextAlign.center,
@@ -163,28 +171,36 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
   Widget buildList(QuerySnapshot querySnapshot, String option) {
     return ListView(
         children: querySnapshot.docs.map((DocumentSnapshot document) {
-         return  buildData(document,option);
-      }).toList()
-    );
+      return buildData(document, option);
+    }).toList());
   }
 
   Widget buildData(DocumentSnapshot document, String option) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: GradientCard(
-          name: document['name'],
-          maxDiscount: document['maxDiscount']*1.0,
-          freeship: document['freeship'],
-          time: document['time'],
-          startColor: const Color(0xfffdfcfb),
-          endColor: const Color(0xffe2d1c3),
-          option: option,
-          onclick: (){
-            setState((){
-              _repository.saveVoucher(document.id).then((value) => Dialog(context));
-            });
-          },
-        ));
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: GradientCard(
+        name: document['name'],
+        maxDiscount: document['maxDiscount'] * 1.0,
+        freeship: document['freeship'],
+        time: document['time'],
+        startColor: const Color(0xfffdfcfb),
+        endColor: const Color(0xffe2d1c3),
+        option: option,
+        onclick: () {
+          setState(() {
+            _repository
+                .saveVoucher(document.id)
+                .then((value) => Dialog(context));
+          });
+        },
+        point: document['exchangedPoint'],
+        onExchanged: () {
+          setState(() {
+            pointDialog(context, document.id, document['exchangedPoint']);
+          });
+        },
+      ),
+    );
   }
 
   Widget buildListCollection(List<CampaignModel> listCampaign) {
@@ -207,7 +223,8 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
           startColor: const Color(0xfffdfcfb),
           endColor: const Color(0xffe2d1c3),
           option: "Đã đổi",
-          onclick: (){},
+          onclick: () {},
+          onExchanged: () {},
         ));
   }
 
@@ -240,10 +257,97 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
               ],
             ),
           );
-        }).then((val){
+        }).then((val) {
       if (_timer.isActive) {
         _timer.cancel();
       }
     });
+  }
+
+  pointDialog(BuildContext context, String id, int point) {
+    late Timer _timer;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.black.withOpacity(0.5),
+            title: Column(
+              children: [
+                const Text(
+                  'Điểm của bạn:',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                FutureBuilder(
+                    future: FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(user!.uid)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text(
+                          'Đã có lỗi xảy ra!',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                (snapshot.data
+                                        as DocumentSnapshot)['redeemPoint']
+                                    .toString(),
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const Icon(Icons.diamond, color: Colors.blue),
+                            ],
+                          ),
+                          (snapshot.data as DocumentSnapshot)['redeemPoint'] >=
+                                  point
+                              ? OutlinedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _repository.exchangeVoucher(id, point);
+                                    });
+                                    Navigator.of(context).pop();
+                                    const snackBar = SnackBar(
+                                      content: Text('Đổi điểm thành công'),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  },
+                                  child: const Text(
+                                    'Đổi điểm',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                )
+                              : const Text(
+                                  'Bạn không đủ điểm',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                        ],
+                      );
+                    }),
+              ],
+            ),
+          );
+        }).then((val) {});
   }
 }

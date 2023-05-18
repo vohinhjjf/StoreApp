@@ -52,7 +52,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen>
                     labelColor: mPrimaryColor,
                     unselectedLabelColor: Colors.black,
                     indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
+                    indicator: const BoxDecoration(
                         /*gradient: const LinearGradient(
                             colors: [mHighColor, mPrimaryColor]),
                         borderRadius: BorderRadius.circular(50),
@@ -87,7 +87,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen>
               ),
               body: TabBarView(
                 controller: _tabController,
-                  children: [
+                  children: const [
                 ListData(status: "Đang xử lý"),
                 ListData(status: "Đã nhận hàng"),
                 ListData(status: "Đơn đã hủy"),

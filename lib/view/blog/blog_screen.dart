@@ -52,6 +52,12 @@ class _BlogScreenState extends State<BlogScreen> {
           'Blogs',
           style: TextStyle(color: Colors.white),
         ),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
         iconTheme: const IconThemeData(color: mPrimaryColor),
       ),
       body: WillPopScope(

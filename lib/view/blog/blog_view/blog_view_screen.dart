@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:store_app/models/comment_model.dart';
 
 import '../../../Firebase/respository.dart';
 import '../../../constant.dart';
@@ -45,6 +44,12 @@ class _BlogViewPageState extends State<BlogViewPage> {
         title: const Text(
           'Blog Detail',
           style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,),
+            onPressed: (){
+              Navigator.pop(context);
+            }
         ),
         iconTheme: const IconThemeData(color: mPrimaryColor),
       ),

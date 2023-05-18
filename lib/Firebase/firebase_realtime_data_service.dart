@@ -45,6 +45,8 @@ class CustomerApiProvider {
     });
   }
 
+  
+
   //get user data by User id
   Future<CustomerModel> getUserById(String id) async {
     CustomerModel customerModel = CustomerModel();
@@ -253,6 +255,10 @@ class CustomerApiProvider {
         .collection('collection')
         .doc(user!.uid)
         .set({'active': false, 'voucherId': id, 'userId': user!.uid});
+  }
+
+  Future<void> exchangeVoucher(String id, int point) async {
+    exchangeRedeemPoint(point, id);
   }
 
   Future<List<CampaignModel>> getVoucherSaved() async {
@@ -597,6 +603,25 @@ class CustomerApiProvider {
         'comments': FieldValue.arrayUnion([dummy])
       },
     );
+  }
+
+  Future<void> addRedeemPoint(int point) async {
+    customer.doc(user?.uid).set(
+      {'redeemPoint': FieldValue.increment(point)},
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> exchangeRedeemPoint(int point, String id) async {
+    customer.doc(user?.uid).get().then((value) {
+      if (point >= value['redeemPoint']) {
+        customer.doc(user?.uid).set(
+          {'redeemPoint': FieldValue.increment(-point)},
+          SetOptions(merge: true),
+        );
+        saveVoucher(id);
+      }
+    });
   }
 
   Query<Map<String, dynamic>> categoryFilter(int val) {

@@ -129,4 +129,9 @@ class Repository {
 
   Future<void> increaseCommentLikeCount(String blogId, var comment) =>
       customerApiProvider.increaseCommentLikeCount(blogId, comment);
+
+  Future<void> addRedeemPoint(int point) =>
+      customerApiProvider.addRedeemPoint(point);
+  Future<void> exchangeVoucher(String id, int point) =>
+      customerApiProvider.exchangeVoucher(id, point);
 }

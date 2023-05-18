@@ -15,7 +15,7 @@ class _GetMyStoresState extends State<GetMyStores> {
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_ios,
               color: mPrimaryColor,
               size: subhead,
