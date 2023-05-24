@@ -138,18 +138,22 @@ class MessagesPageState extends State<MessagesPage> {
                             itemCount: snapshot.data?.docs.length,
                             controller: listScrollController,
                           );
-                        } else {
+                        }
+                        else {
                           return const Center(
                             child: Text("No users"),
                           );
                         }
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: ColorConstants.themeColor,
-                          ),
+                      } else if (snapshot.hasError){
+                        return Center(
+                          child: Text(snapshot.error.toString()),
                         );
                       }
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorConstants.themeColor,
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -167,7 +171,7 @@ class MessagesPageState extends State<MessagesPage> {
   }
 
   Widget buildLoading() {
-    return Positioned(
+    return Center(
       child: isLoading ? LoadingView() : const SizedBox.shrink(),
     );
   }
@@ -287,6 +291,7 @@ class MessagesPageState extends State<MessagesPage> {
       } else {
         return Container(
           margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
+          //height: 100,
           child: TextButton(
             onPressed: () {
               if (Utilities.isKeyboardShowing()) {
@@ -409,7 +414,7 @@ class MessagesPageState extends State<MessagesPage> {
     readLocal();
     print(
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$userId");
-    return Flexible(
+    return Container(
       child: groupChatId.isNotEmpty
           ? StreamBuilder<QuerySnapshot>(
               stream: chatProvider.getChatStream(groupChatId, 20),

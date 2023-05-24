@@ -614,7 +614,7 @@ class CustomerApiProvider {
 
   Future<void> exchangeRedeemPoint(int point, String id) async {
     customer.doc(user?.uid).get().then((value) {
-      if (point >= value['redeemPoint']) {
+      if (point <= value['redeemPoint']) {
         customer.doc(user?.uid).set(
           {'redeemPoint': FieldValue.increment(-point)},
           SetOptions(merge: true),

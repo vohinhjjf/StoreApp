@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:store_app/components/ThemeManager.dart';
 import 'package:store_app/providers/auth_provider.dart';
 import 'package:store_app/view/account_info/account_info_screen.dart';
-import 'package:store_app/view/blog/blog_screen.dart';
 import 'package:store_app/view/history/purchase_history_screen.dart';
 import 'package:store_app/view/login/splash_screen.dart';
 import 'package:store_app/view/login/welcome_screen.dart';
@@ -13,7 +13,9 @@ import 'package:store_app/view/order/delivery_address.dart';
 import 'package:store_app/view/review/review_screen.dart';
 import 'package:store_app/view/stores/stores_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Firebase/firebase_realtime_data_service.dart';
 import '../payment/payment_home.dart';
+import '../point/point_screen.dart';
 import '../support_request/support_screen.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -36,6 +38,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  var customerApiProvider = CustomerApiProvider();
   User? user = FirebaseAuth.instance.currentUser;
   final auth = AuthProvider();
   bool check = false;
@@ -177,7 +180,7 @@ class _BodyState extends State<Body> {
                                 'Địa chỉ giao hàng',
                                 Icons.location_on_rounded,
                                 '',
-                                Colors.orange,
+                                Colors.orange.shade900,
                                 theme, onTab: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
@@ -196,6 +199,33 @@ class _BodyState extends State<Body> {
                                     ),
                                   );
                                 }),
+                            const SizedBox(height: 8),
+                          FutureBuilder(
+                              future:
+                              customerApiProvider.customer.doc(user?.uid).get(),
+                              builder: (context,AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                                if(snapshot.hasData){
+                                  return _buildListTile('Điểm thưởng', Icons.diamond,
+                                      "${snapshot.data!['redeemPoint'].toString()} điểm",
+                                      Colors.yellow.shade800, theme, onTab: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                PointScreen(),
+                                          ),
+                                        );
+                                      });
+                                }
+                                return _buildListTile('Điểm thưởng', Icons.diamond, '',
+                                    Colors.yellow.shade800, theme, onTab: () {
+                                      /*Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                PaymentHome(),
+                                          ),
+                                        );*/
+                                    });
+                              }),
                             const SizedBox(height: 8),
                             _buildListTile(
                                 'Đơn hàng của tôi',
@@ -219,6 +249,7 @@ class _BodyState extends State<Body> {
                               children: [
                                 _buildBuyItems("Chờ xác nhận",
                                     Icons.account_balance_wallet_outlined,
+                                "Đang xử lý",
                                     onTab: () {
                                   Navigator.push(
                                     context,
@@ -232,6 +263,7 @@ class _BodyState extends State<Body> {
                                 }),
                                 _buildBuyItems(
                                     "Chờ lấy hàng", CupertinoIcons.cube_box,
+                                    "Đã nhận hàng",
                                     onTab: () {
                                   Navigator.push(
                                     context,
@@ -245,6 +277,7 @@ class _BodyState extends State<Body> {
                                 }),
                                 _buildBuyItems(
                                     "Đã giao", Icons.fire_truck_outlined,
+                                    "Đơn đã hủy",
                                     onTab: () {
                                   Navigator.push(
                                     context,
@@ -257,6 +290,7 @@ class _BodyState extends State<Body> {
                                   );
                                 }),
                                 _buildBuyItems("Đánh giá", Icons.stars_outlined,
+                                    "Đơn đã hủy",
                                     onTab: () {
                                   Navigator.push(
                                     context,
@@ -333,7 +367,7 @@ class _BodyState extends State<Body> {
                             }),
                             const SizedBox(height: 8),
                             _buildListTile('Đăng xuất', Icons.exit_to_app, '',
-                                Colors.red, theme, onTab: () {
+                                Colors.red.shade700, theme, onTab: () {
                               auth.deletePrefsID().then((value) => {
                                     Navigator.push(
                                       context,
@@ -389,25 +423,66 @@ class _BodyState extends State<Body> {
         onTap: onTab);
   }
 
-  Widget _buildBuyItems(String title, IconData icons, {onTab}) {
+  Widget _buildBuyItems(String title, IconData icons, String status, {onTab}) {
     return InkWell(
       onTap: onTab,
-      child: Column(
+      child: Stack(
         children: [
-          Icon(
-            icons,
-            color: Colors.black,
+          Column(
+            children: [
+              Icon(
+                icons,
+                color: Colors.black,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                ),
+              )
+            ],
           ),
-          const SizedBox(
-            height: 5,
+          StreamBuilder(
+            stream: customerApiProvider.cart.doc(user?.uid)
+                .collection("purchase history").where("orderStatus", isEqualTo: status).snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if(snapshot.hasData){
+                return snapshot.data!.docs.isEmpty
+                    ? const SizedBox()
+                    : Positioned(
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: Colors.deepOrange,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 22,
+                      minHeight: 22,
+                    ),
+                    child: Text(
+                      '${snapshot.data!.docs.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+              else if(snapshot.hasError){
+                return Text(snapshot.error.toString());
+              }
+              return const CircularProgressIndicator();
+            },
           ),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-            ),
-          )
         ],
       ),
     );

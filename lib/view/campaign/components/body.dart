@@ -45,13 +45,13 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
     super.initState();
     _controller =
         TabController(length: list.length, vsync: this, initialIndex: 0);
-    _controller.addListener(() {
+    /*_controller.addListener(() {
       setState(() {
         _controller =
             TabController(length: list.length, vsync: this, initialIndex: 0);
         print("Selected Index: ${_controller.index}");
       });
-    });
+    });*/
   }
 
   @override
@@ -296,6 +296,9 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                             fontSize: 12,
                           ),
                         );
+                      }
+                      if(snapshot.connectionState == ConnectionState.waiting){
+                        return const Center(child: CircularProgressIndicator(),);
                       }
                       return Column(
                         children: [

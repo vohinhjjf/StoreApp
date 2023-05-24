@@ -120,6 +120,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0"
+  countdown_flutter_ns:
+    dependency: "direct main"
+    description:
+      name: countdown_flutter_ns
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   cross_file:
     dependency: transitive
     description:
@@ -554,7 +561,7 @@ packages:
       name: image_picker_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.6+15"
+    version: "0.8.6+16"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -758,6 +765,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.14.0"
+  pinput:
+    dependency: "direct main"
+    description:
+      name: pinput
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.21"
   platform:
     dependency: transitive
     description:
@@ -861,6 +875,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  smart_auth:
+    dependency: transitive
+    description:
+      name: smart_auth
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.8"
   source_span:
     dependency: transitive
     description:
