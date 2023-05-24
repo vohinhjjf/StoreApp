@@ -9,6 +9,9 @@ class CustomerModel {
   late String address;
   late String image;
   late List<String> likeBkogs;
+  late int point;
+  late bool checkin;
+  late String luckyNumber;
 
   CustomerModel();
 
@@ -24,6 +27,9 @@ class CustomerModel {
     customer.image = data['image'] as String;
     customer.number = data['number'] as String;
     customer.address = data['address'] as String;
+    customer.point = data['redeemPoint'] as int;
+    customer.checkin = data['checkIn'] as bool;
+    customer.luckyNumber = data['luckyNumber'] as String;
     return customer;
   }
 }

@@ -20,6 +20,9 @@ class Repository {
         'address': '',
         'image': '',
         'likedBlogs': [],
+        'point': 0,
+        'checkin': false,
+        'luckyNumber': '',
       });
 
   Future<void> updateAvatar(String id, String url) =>
@@ -134,4 +137,10 @@ class Repository {
       customerApiProvider.addRedeemPoint(point);
   Future<void> exchangeVoucher(String id, int point) =>
       customerApiProvider.exchangeVoucher(id, point);
+
+  Future<void> checkInPoint(int point) =>
+      customerApiProvider.checkInPoint(point);
+
+  Future<void> luckyNumber(String number) =>
+      customerApiProvider.luckyNumber(number);
 }

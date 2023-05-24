@@ -52,7 +52,7 @@ class CustomerApiProvider {
     CustomerModel customerModel = CustomerModel();
     var docSnapshot = await customer.doc(user!.uid).get();
     if (docSnapshot.exists) {
-      Map<String, dynamic> data = docSnapshot.data()!;
+      /*Map<String, dynamic> data = docSnapshot.data()!;
       customerModel.id = data["id"];
       customerModel.name = data["name"];
       customerModel.birthday = data["birthday"];
@@ -60,7 +60,8 @@ class CustomerApiProvider {
       customerModel.email = data["email"];
       customerModel.address = data["address"];
       customerModel.image = data['image'];
-      customerModel.likeBkogs = data['likedBlogs'].cast<String>() ?? <String>[];
+      customerModel.likeBkogs = data['likedBlogs'].cast<String>() ?? <String>[];*/
+      customerModel = CustomerModel.fromDocument(docSnapshot);
     }
     return customerModel;
   }
@@ -605,25 +606,6 @@ class CustomerApiProvider {
     );
   }
 
-  Future<void> addRedeemPoint(int point) async {
-    customer.doc(user?.uid).set(
-      {'redeemPoint': FieldValue.increment(point)},
-      SetOptions(merge: true),
-    );
-  }
-
-  Future<void> exchangeRedeemPoint(int point, String id) async {
-    customer.doc(user?.uid).get().then((value) {
-      if (point <= value['redeemPoint']) {
-        customer.doc(user?.uid).set(
-          {'redeemPoint': FieldValue.increment(-point)},
-          SetOptions(merge: true),
-        );
-        saveVoucher(id);
-      }
-    });
-  }
-
   Query<Map<String, dynamic>> categoryFilter(int val) {
     switch (val) {
       case 0:
@@ -666,5 +648,44 @@ class CustomerApiProvider {
           return blog.where('active', isEqualTo: true);
         }
     }
+  }
+
+  // Point
+  Future<void> addRedeemPoint(int point) async {
+    customer.doc(user?.uid).set(
+      {'redeemPoint': FieldValue.increment(point)},
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> exchangeRedeemPoint(int point, String id) async {
+    customer.doc(user?.uid).get().then((value) {
+      if (point <= value['redeemPoint']) {
+        customer.doc(user?.uid).set(
+          {'redeemPoint': FieldValue.increment(-point)},
+          SetOptions(merge: true),
+        );
+        saveVoucher(id);
+      }
+    });
+  }
+
+  Future<void> checkInPoint(int point) async {
+    customer.doc(user?.uid).set(
+      {
+        'redeemPoint': FieldValue.increment(point),
+        'checkIn': true
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> luckyNumber(String number) async {
+    customer.doc(user?.uid).set(
+      {
+        'luckyNumber': number
+      },
+      SetOptions(merge: true),
+    );
   }
 }
