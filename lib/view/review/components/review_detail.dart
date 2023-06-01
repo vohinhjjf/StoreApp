@@ -146,10 +146,10 @@ class _ReviewDetailState extends State<ReviewDetail> {
                     Container(
                       padding: const EdgeInsets.only(top: 10, left: 10, bottom: 0, right: 10),
                       color: Colors.white,
-                      child: const Text('Nhập 50 kí tự',
+                      child: Text('Nhập 10 kí tự để được nhận 50 điểm thưởng',
                         style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey
+                            color: Colors.grey.shade700
                         ),
                       ),
                     ),
@@ -173,10 +173,10 @@ class _ReviewDetailState extends State<ReviewDetail> {
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                       color: Colors.white,
-                      child: const Text('Tải lên hình ảnh',
+                      child:  Text('Tải lên hình ảnh (thêm 1 hình ảnh/video được nhận 50 điểm thưởng)',
                         style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey
+                            color: Colors.grey.shade700
                         ),
                       ),
                     ),

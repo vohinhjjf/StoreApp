@@ -1,50 +1,40 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:store_app/Firebase/firebase_realtime_data_service.dart';
 import 'package:store_app/components/appbar.dart';
-import 'package:store_app/components/discount_painter.dart';
 import 'package:store_app/constant.dart';
 import 'package:store_app/models/product_model.dart';
-import 'package:store_app/utils/format.dart';
 import 'package:store_app/view/product/product_detail_screen.dart';
 
-class ListSaleWidget extends StatefulWidget {
-  String id ="id";
-  ListSaleWidget({super.key, required this.id});
+import '../../Firebase/firebase_realtime_data_service.dart';
+import '../../components/discount_painter.dart';
+import '../../utils/format.dart';
+
+class ListFavoriteWidget extends StatefulWidget {
+  ListFavoriteWidget({super.key});
   @override
-  _ListSaleWidgetWidgetState createState() => _ListSaleWidgetWidgetState();
+  _ListFavoriteWidgetState createState() => _ListFavoriteWidgetState();
 }
 
-class _ListSaleWidgetWidgetState extends State<ListSaleWidget> {
+class _ListFavoriteWidgetState extends State<ListFavoriteWidget> {
   final customerApiProvider = CustomerApiProvider();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: ListAppBar().AppBarProduct(context, "Khuyến mãi đặc biệt", widget.id,(){
+      appBar: ListAppBar().AppBarCart(context, "Sản phẩm yêu thích", (){
         Navigator.of(context).pop();
       }),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: StreamBuilder(
-            stream: customerApiProvider.product.where("active", isEqualTo: true).snapshots(),
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+            stream: customerApiProvider.getListFavorite().asStream(),
+            builder: (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot){
               if(snapshot.hasData){
-                List<ProductModel> list = snapshot.data!.docs.isNotEmpty
-                    ? snapshot.data!.docs.map((e) => ProductModel.toMap(e)).toList(): [];
-                List<ProductModel> list_sale = [];
-                for(int i=0; i<list.length;i++){
-                  if(list[i].discountPercentage >= 15){
-                    list_sale.add(list[i]);
-                  }
-                }
-                return BuildList(list_sale);
+                return BuildList(snapshot.data!);
               }
               else if(snapshot.hasError) {
                 print('Lỗi: ${snapshot.error}');
@@ -91,7 +81,7 @@ class _ListSaleWidgetWidgetState extends State<ListSaleWidget> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return ListSaleWidget(id: widget.id);
+                        return ListFavoriteWidget();
                       },
                     ),
                   );
@@ -111,7 +101,7 @@ class _ListSaleWidgetWidgetState extends State<ListSaleWidget> {
                   child: Stack(
                     children: [
                       Image.network(
-                        product.image
+                          product.image
                       ),
                       Align(
                         alignment: Alignment.topRight,

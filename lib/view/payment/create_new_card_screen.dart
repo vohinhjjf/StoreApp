@@ -50,6 +50,7 @@ class CreateNewCreditCardState extends State<CreateNewCreditCard> {
               isHolderNameVisible: true,
               isChipVisible: true,
               isSwipeGestureEnabled: false,
+              cardType: CardType.mastercard,
               animationDuration: Duration(milliseconds: 1000),
               glassmorphismConfig: Glassmorphism.defaultConfig(),
               backgroundNetworkImage: 'https://th.bing.com/th/id/OIP.dJegwPSS-s84fGCjn6F48AHaGL?pid=ImgDet&rs=1',

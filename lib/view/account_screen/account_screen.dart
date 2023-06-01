@@ -43,6 +43,7 @@ class _BodyState extends State<Body> {
   final auth = AuthProvider();
   bool check = false;
   String mode = "Light";
+  int length = 0;
 
   @override
   void initState() {
@@ -200,9 +201,9 @@ class _BodyState extends State<Body> {
                                   );
                                 }),
                             const SizedBox(height: 8),
-                          FutureBuilder(
-                              future:
-                              customerApiProvider.customer.doc(user?.uid).get(),
+                          StreamBuilder(
+                              stream:
+                              customerApiProvider.customer.doc(user?.uid).snapshots(),
                               builder: (context,AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
                                 if(snapshot.hasData){
                                   return _buildListTile('Điểm thưởng', Icons.diamond,
@@ -262,7 +263,7 @@ class _BodyState extends State<Body> {
                                   );
                                 }),
                                 _buildBuyItems(
-                                    "Chờ lấy hàng", CupertinoIcons.cube_box,
+                                    "Đã giao hàng", Icons.fire_truck_outlined,
                                     "Đã nhận hàng",
                                     onTab: () {
                                   Navigator.push(
@@ -276,7 +277,7 @@ class _BodyState extends State<Body> {
                                   );
                                 }),
                                 _buildBuyItems(
-                                    "Đã giao", Icons.fire_truck_outlined,
+                                    "Đã hủy", Icons.cancel_outlined,
                                     "Đơn đã hủy",
                                     onTab: () {
                                   Navigator.push(
@@ -290,7 +291,7 @@ class _BodyState extends State<Body> {
                                   );
                                 }),
                                 _buildBuyItems("Đánh giá", Icons.stars_outlined,
-                                    "Đơn đã hủy",
+                                    "Đã nhận hàng",
                                     onTab: () {
                                   Navigator.push(
                                     context,
@@ -430,6 +431,7 @@ class _BodyState extends State<Body> {
         children: [
           Column(
             children: [
+              SizedBox(height: 5,),
               Icon(
                 icons,
                 color: Colors.black,
@@ -447,34 +449,51 @@ class _BodyState extends State<Body> {
             ],
           ),
           StreamBuilder(
-            stream: customerApiProvider.cart.doc(user?.uid)
+            stream: customerApiProvider.customer.doc(user?.uid)
                 .collection("purchase history").where("orderStatus", isEqualTo: status).snapshots(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if(snapshot.hasData){
+                print("Length: ${snapshot.data!.docs.length}");
                 return snapshot.data!.docs.isEmpty
-                    ? const SizedBox()
-                    : Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color: Colors.deepOrange,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 22,
-                      minHeight: 22,
-                    ),
-                    child: Text(
-                      '${snapshot.data!.docs.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                ? const SizedBox()
+                : StreamBuilder(
+                    stream: lengthNotReview(snapshot.data!.docs).asStream(),
+                    builder: (context, AsyncSnapshot<int> asyncSnapshot){
+                      if(asyncSnapshot.hasData){
+                        if(title == "Đánh giá"){
+                          length = asyncSnapshot.data!;
+                        }else{
+                          length = snapshot.data!.docs.length;
+                        }
+                        return Positioned(
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: Colors.deepOrange,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 20,
+                              minHeight: 20,
+                            ),
+                            child: Text(
+                              '$length',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+                      else if(asyncSnapshot.hasError){
+                        return const SizedBox();
+                      }
+                      return const CircularProgressIndicator();
+                    }
                 );
               }
               else if(snapshot.hasError){
@@ -486,5 +505,19 @@ class _BodyState extends State<Body> {
         ],
       ),
     );
+  }
+
+  Future<int> lengthNotReview(List<QueryDocumentSnapshot<Object?>> list_id) async {
+    int temp = 0;
+    for(var id in list_id){
+      await customerApiProvider.customer.doc(customerApiProvider.user!.uid)
+          .collection("purchase history").doc(id.id)
+          .collection('products').where("reviewStatus", isEqualTo: false)
+          .get().then((value) => {
+            temp = temp + value.docs.length
+      });
+    }
+    print("Temp: $temp");
+    return temp;
   }
 }

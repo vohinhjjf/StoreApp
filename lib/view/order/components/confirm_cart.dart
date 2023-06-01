@@ -18,10 +18,8 @@ import 'package:store_app/utils/format.dart';
 import 'package:store_app/view/order/delivery_address.dart';
 import 'package:store_app/view/order/product_cart_screen.dart';
 
-import '../../../Firebase/payment/stripe_payment_service.dart';
 import '../../../providers/order_provider.dart';
 import '../../payment/create_new_card_screen.dart';
-import '../../payment/payment_home.dart';
 import '../../payment/stripe/existing-cards.dart';
 
 class ConfirmOrderPage extends StatefulWidget {
@@ -203,7 +201,10 @@ class _ConfirmOrderPageWidgetState extends State<ConfirmOrderPage> with SingleTi
                     onTap: () async {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       EasyLoading.show(status: 'Vui lòng đợi...');
-                      _repository.addPurchaseHistory(list_cartModel,addressModel, total, discount, double.parse(widget.Freeship)*1000, widget.checkFreeShip, widget.checkVoucher).whenComplete(() {
+                      _repository.addPurchaseHistory(
+                          list_cartModel,addressModel, total, discount,
+                          double.parse(widget.Freeship)*1000,
+                          widget.checkFreeShip, widget.checkVoucher).whenComplete(() {
                         EasyLoading.dismiss();
                         EasyLoading.showSuccess('Đơn đặt hàng của bạn đã được gửi').whenComplete(() {
                           Navigator.of(context).pushAndRemoveUntil(
@@ -333,7 +334,13 @@ class _ConfirmOrderPageWidgetState extends State<ConfirmOrderPage> with SingleTi
                     onTap: (){
                       Navigator.of(context).push(
                         MaterialPageRoute (
-                          builder: (BuildContext context) => ExistingCardsPage(),
+                          builder: (BuildContext context) => ExistingCardsPage(
+                            value: "confirm",
+                            addPurchaseHistory: _repository.addPurchaseHistory(
+                                list_cartModel,addressModel, total, discount,
+                                double.parse(widget.Freeship)*1000,
+                                widget.checkFreeShip, widget.checkVoucher),
+                          ),
                         ),
                       );
                     }

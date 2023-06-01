@@ -9,6 +9,9 @@ import 'package:store_app/view/card/widgets/search.dart';
 import 'package:store_app/view/login/welcome_screen.dart';
 import 'package:store_app/view/order/product_cart_screen.dart';
 
+import '../models/product_model.dart';
+import '../view/product/list_favorite_product.dart';
+
 class ListAppBar {
   var customerApiProvider = CustomerApiProvider();
   User? user = FirebaseAuth.instance.currentUser;
@@ -101,13 +104,63 @@ class ListAppBar {
         const SizedBox(
           width: 5,
         ),
-        IconButton(
-          iconSize: 28,
-          onPressed: () async {
-
-          },
-          icon: const Icon(MdiIcons.heartOutline,),
-          color: Colors.white,
+        Container(
+          padding: const EdgeInsets.only(top: 5),
+          child: Stack(
+            children: <Widget>[
+              IconButton(
+                iconSize: 28,
+                onPressed: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  if(prefs.getString('ID') == ''|| prefs.getString('ID') == null){
+                    Dialog(context);
+                  }
+                  else{
+                    Navigator.of(context).push(MaterialPageRoute (
+                        builder: (BuildContext context) => ListFavoriteWidget()));
+                  }
+                },
+                icon: const Icon(MdiIcons.heartOutline,),
+                color: Colors.white,
+              ),
+              StreamBuilder(
+                stream: customerApiProvider.getListFavorite().asStream(),
+                builder: (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot) {
+                  if(snapshot.hasData){
+                    return snapshot.data!.isEmpty
+                        ? const SizedBox()
+                        : Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Colors.deepOrange,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 22,
+                          minHeight: 22,
+                        ),
+                        child: Text(
+                          '${snapshot.data!.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+                  else if(snapshot.hasError){
+                    return Text(snapshot.error.toString());
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
+            ],
+          ),
         ),
         const SizedBox(
           width: 5,
@@ -132,7 +185,7 @@ class ListAppBar {
     );
   }
 
-  AppBar AppBarProduct(BuildContext context, String title, String id) {
+  AppBar AppBarProduct(BuildContext context, String title, String id, Function() onPressed) {
     if(id =="")
     {
       id = "id";
@@ -141,9 +194,7 @@ class ListAppBar {
       backgroundColor: Colors.lightBlue.shade300,
       leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,),
-          onPressed: () {
-            Navigator.of(context).pop();
-          }),
+          onPressed: onPressed),
       centerTitle: false,
       actions: [
         Container(
@@ -207,13 +258,63 @@ class ListAppBar {
         const SizedBox(
           width: 5,
         ),
-        IconButton(
-          iconSize: 28,
-          onPressed: () async {
-
-          },
-          icon: const Icon(MdiIcons.heartOutline,),
-          color: Colors.white,
+        Container(
+          padding: const EdgeInsets.only(top: 5),
+          child: Stack(
+            children: <Widget>[
+              IconButton(
+                iconSize: 28,
+                onPressed: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  if(prefs.getString('ID') == ''|| prefs.getString('ID') == null){
+                    Dialog(context);
+                  }
+                  else{
+                    Navigator.of(context).push(MaterialPageRoute (
+                        builder: (BuildContext context) => ListFavoriteWidget()));
+                  }
+                },
+                icon: const Icon(MdiIcons.heartOutline,),
+                color: Colors.white,
+              ),
+              StreamBuilder(
+                stream: customerApiProvider.getListFavorite().asStream(),
+                builder: (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot) {
+                  if(snapshot.hasData){
+                    return snapshot.data!.isEmpty
+                        ? const SizedBox()
+                        : Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Colors.deepOrange,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 22,
+                          minHeight: 22,
+                        ),
+                        child: Text(
+                          '${snapshot.data!.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+                  else if(snapshot.hasError){
+                    return Text(snapshot.error.toString());
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
+            ],
+          ),
         ),
         const SizedBox(
           width: 5,

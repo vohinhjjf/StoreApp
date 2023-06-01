@@ -21,7 +21,6 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
   final customerApiProvider = CustomerApiProvider();
   late TabController _controller;
-  final Repository _repository = Repository();
   User? user = FirebaseAuth.instance.currentUser;
   bool isExchanged = false;
   int point = 0;
@@ -126,7 +125,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
               },
             ),
             FutureBuilder(
-              future: _repository.getVoucherSaved(),
+              future: customerApiProvider.getVoucherSaved(),
               builder: (context, AsyncSnapshot<List<CampaignModel>> snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.isEmpty) {
@@ -183,21 +182,31 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
         maxDiscount: document['maxDiscount'] * 1.0,
         freeship: document['freeship'],
         time: document['time'],
-        startColor: const Color(0xfffdfcfb),
-        endColor: const Color(0xffe2d1c3),
+        startColor: document['exchangedPoint'] == 0
+            ?const Color(0xfffdfcfb)
+            :const Color(0xff01bfff),
+        endColor: document['exchangedPoint'] == 0
+            ?const Color(0xffe2d1c3)
+            :const Color(0xff426fff),
         option: option,
         onclick: () {
-          setState(() {
-            _repository
-                .saveVoucher(document.id)
-                .then((value) => Dialog(context));
+          customerApiProvider.checkVoucher(document.id).then((value) {
+            if(value){
+              notificationDialog(context);
+            }else{
+              customerApiProvider
+                  .saveVoucher(document.id)
+                  .then((value) => successDialog(context));
+            }
           });
+          print("click");
         },
         point: document['exchangedPoint'],
         onExchanged: () {
           setState(() {
             pointDialog(context, document.id, document['exchangedPoint']);
           });
+          print("onExchanged");
         },
       ),
     );
@@ -228,7 +237,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
         ));
   }
 
-  Dialog(BuildContext context) {
+  successDialog(BuildContext context) {
     late Timer _timer;
     return showDialog(
         context: context,
@@ -243,6 +252,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                 Icon(
                   MdiIcons.checkboxMarkedCircle,
                   color: Colors.white,
+                  size: 30,
                 ),
                 SizedBox(
                   height: 6,
@@ -251,7 +261,44 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                   'Lưu thành công!',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).then((val) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    });
+  }
+
+  notificationDialog(BuildContext context) {
+    late Timer _timer;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          _timer = Timer(const Duration(seconds: 2), () {
+            Navigator.of(context).pop();
+          });
+          return AlertDialog(
+            backgroundColor: Colors.black.withOpacity(0.5),
+            title: Column(
+              children: const [
+                Icon(
+                  Icons.error,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  'Bạn đã có voucher này rồi!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
                 ),
               ],
@@ -265,7 +312,6 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
   }
 
   pointDialog(BuildContext context, String id, int point) {
-    late Timer _timer;
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -293,7 +339,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                           'Đã có lỗi xảy ra!',
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: 12,
+                            fontSize: 16,
                           ),
                         );
                       }
@@ -311,7 +357,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                                     .toString(),
                                 style: const TextStyle(
                                   color: Colors.blue,
-                                  fontSize: 12,
+                                  fontSize: 16,
                                 ),
                               ),
                               const Icon(Icons.diamond, color: Colors.blue),
@@ -322,7 +368,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                               ? OutlinedButton(
                                   onPressed: () {
                                     setState(() {
-                                      _repository.exchangeVoucher(id, point);
+                                      customerApiProvider.exchangeVoucher(id, point);
                                     });
                                     Navigator.of(context).pop();
                                     const snackBar = SnackBar(
@@ -335,6 +381,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                                     'Đổi điểm',
                                     style: TextStyle(
                                       color: Colors.green,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 )
@@ -342,7 +389,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                                   'Bạn không đủ điểm',
                                   style: TextStyle(
                                     color: Colors.red,
-                                    fontSize: 12,
+                                    fontSize: 16,
                                   ),
                                 ),
                         ],

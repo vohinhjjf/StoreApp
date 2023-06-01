@@ -94,7 +94,9 @@ class ProductItemCard extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return ProductDetailScreen(product,id: prefs.getString('ID') ?? "");
+                        return ProductDetailScreen(product,(){
+                          Navigator.of(context).pop();
+                          },id: prefs.getString('ID') ?? "");
                       },
                     ),
                   );

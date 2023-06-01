@@ -41,6 +41,9 @@ class Repository {
   Future<CustomerModel> getUserById(String id) =>
       customerApiProvider.getUserById(id);
 
+  favoriteProduct(String productId) =>
+      customerApiProvider.favoriteProduct(productId);
+
   Future<String> setAddress(AddressModel addressModel) =>
       customerApiProvider.setAddress(addressModel);
 

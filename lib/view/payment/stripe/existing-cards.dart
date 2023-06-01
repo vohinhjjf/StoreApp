@@ -1,50 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Firebase/payment/stripe_payment_service.dart';
 import '../../../components/appbar.dart';
+import '../../home/dashboard_screen.dart';
 
 class ExistingCardsPage extends StatefulWidget {
-  static const String id = 'existing-cards';
+   String value;
+   Future<void> addPurchaseHistory;
 
-  ExistingCardsPage({Key? key}) : super(key: key);
+  ExistingCardsPage({Key? key, required this.value, required this.addPurchaseHistory}) : super(key: key);
 
   @override
   ExistingCardsPageState createState() => ExistingCardsPageState();
 }
 
 class ExistingCardsPageState extends State<ExistingCardsPage> {
-  StripeService _service = StripeService();
-
-  /*Future<StripeTransactionResponse> payViaExistingCard(BuildContext context,
-      card, amount) async {
-    await EasyLoading.show(status: 'Vui lòng đợi...');
-    var expiryArr = card['expiryDate'].split('/');
-    CreditCard stripeCard = CreditCard(
-      number: card['cardNumber'],
-      expMonth: int.parse(expiryArr[0]),
-      expYear: int.parse(expiryArr[1]),
-    );
-    var response = await StripeService.payViaExistingCard(
-      amount: '${amount}00',
-      currency: 'USD',
-      card: stripeCard,
-    );
-    await EasyLoading.dismiss();
-    ScaffoldMessenger
-        .of(context)
-        .showSnackBar(SnackBar(
-      content: Text(response.message),
-      duration: new Duration(milliseconds: 1200),))
-        .closed
-        .then((_) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-    });
-    return response;
-  }*/
+  final StripeService _service = StripeService();
 
   @override
   Widget build(BuildContext context) {
@@ -77,20 +52,35 @@ class ExistingCardsPageState extends State<ExistingCardsPage> {
               itemBuilder: (BuildContext context, int index) {
                 var card = snapshot.data!.docs[index];
                 return InkWell(
-                  onTap: () {
-                    /*payViaExistingCard(context, card, orderProvider.amount)
-                        .then((response) {
-                      if (response.success == true) {
-                        orderProvider.paymentStatus(response.success);
-                      }
-                    });*/
+                  onTap: () async {
+                    if(widget.value == "confirm"){
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      EasyLoading.show(status: 'Vui lòng đợi...');
+                      widget.addPurchaseHistory.whenComplete(() {
+                        EasyLoading.dismiss();
+                        EasyLoading.showSuccess('Đơn đặt hàng của bạn đã được gửi').whenComplete(() {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute (
+                                builder: (BuildContext context) =>  HomeScreen(id: prefs.getString("ID")!),
+                              ), (route) => false);
+                        });
+                      });
+                    }
                   },
                   child: CreditCardWidget(
                     cardNumber: card['cardNumber'],
                     expiryDate: card['expiryDate'],
                     cardHolderName: card['cardHolderName'],
                     cvvCode: card['cvvCode'],
+                    cardType: CardType.mastercard,
+                    backgroundNetworkImage: 'https://th.bing.com/th/id/OIP.NXuQNHbxmZPhK079UABBagHaEk?pid=ImgDet&rs=1',
                     showBackView: false,
+                    obscureCardNumber: true,
+                    obscureInitialCardNumber: true,
+                    obscureCardCvv: true,
+                    isHolderNameVisible: true,
+                    isChipVisible: true,
+                    isSwipeGestureEnabled: false,
                     onCreditCardWidgetChange: (CreditCardBrand ) {  },
                   ),
                 );

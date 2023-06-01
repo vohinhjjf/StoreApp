@@ -194,7 +194,16 @@ class _ProductScreenState extends State<ProductScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return ProductDetailScreen(value,id: prefs.getString('ID')!);
+                  return ProductDetailScreen(value,(){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ProductScreen(widget.id);
+                        },
+                      ),
+                    );
+                  },id: prefs.getString('ID')!);
                 },
               ),
             );

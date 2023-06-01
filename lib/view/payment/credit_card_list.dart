@@ -33,9 +33,9 @@ class CreditCardList extends StatelessWidget {
             },
           )
         ],*/
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Quản lý thẻ tín dụng',
           style: TextStyle(color: Colors.white),
         ),
@@ -44,11 +44,11 @@ class CreditCardList extends StatelessWidget {
         stream: _service.cards.snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Text('Đã xảy ra sự cố');
+            return const Text('Đã xảy ra sự cố');
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.data!.size == 0) {
@@ -56,8 +56,8 @@ class CreditCardList extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Không có thẻ tín dụng nào được thêm vào tài khoản của bạn'),
-                  SizedBox(
+                  const Text('Không có thẻ tín dụng nào được thêm vào tài khoản của bạn'),
+                  const SizedBox(
                     height: 10,
                   ),
                   ElevatedButton(
@@ -65,7 +65,7 @@ class CreditCardList extends StatelessWidget {
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).primaryColor),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Thêm thẻ',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -83,8 +83,8 @@ class CreditCardList extends StatelessWidget {
               ),
             );
           }
-          return new Container(
-            padding: EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
+          return Container(
+            padding: const EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
             child: ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (BuildContext context, int index) {
@@ -121,7 +121,15 @@ class CreditCardList extends StatelessWidget {
                       expiryDate: card['expiryDate'],
                       cardHolderName: card['cardHolderName'],
                       cvvCode: card['cvvCode'],
-                      showBackView: false, onCreditCardWidgetChange: (CreditCardBrand ) {  },
+                      backgroundNetworkImage: 'https://th.bing.com/th/id/OIP.dJegwPSS-s84fGCjn6F48AHaGL?pid=ImgDet&rs=1',
+                      showBackView: false,
+                      obscureCardNumber: true,
+                      obscureInitialCardNumber: true,
+                      obscureCardCvv: true,
+                      isHolderNameVisible: true,
+                      isChipVisible: true,
+                      isSwipeGestureEnabled: false,
+                      onCreditCardWidgetChange: (CreditCardBrand ) {  },
                     ),
                   ),
                 );

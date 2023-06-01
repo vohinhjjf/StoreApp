@@ -169,7 +169,9 @@ class FlashSaleItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return ProductDetailScreen(flashSale,id: prefs.getString('ID')==null?"id":prefs.getString('ID')!);
+                  return ProductDetailScreen(flashSale,(){
+                    Navigator.of(context).pop();
+                  },id: prefs.getString('ID')==null?"id":prefs.getString('ID')!);
                 },
               ),
             );

@@ -31,7 +31,7 @@ class PaymentHomeState extends State<PaymentHome> {
       case 2:
         Navigator.of(context).push(
           MaterialPageRoute (
-            builder: (BuildContext context) => ExistingCardsPage(),
+            builder: (BuildContext context) => ExistingCardsPage(value: "account", addPurchaseHistory: null as Future,),
           ),
         );
         break;

@@ -52,15 +52,6 @@ class CustomerApiProvider {
     CustomerModel customerModel = CustomerModel();
     var docSnapshot = await customer.doc(user!.uid).get();
     if (docSnapshot.exists) {
-      /*Map<String, dynamic> data = docSnapshot.data()!;
-      customerModel.id = data["id"];
-      customerModel.name = data["name"];
-      customerModel.birthday = data["birthday"];
-      customerModel.number = data["number"];
-      customerModel.email = data["email"];
-      customerModel.address = data["address"];
-      customerModel.image = data['image'];
-      customerModel.likeBkogs = data['likedBlogs'].cast<String>() ?? <String>[];*/
       customerModel = CustomerModel.fromDocument(docSnapshot);
     }
     return customerModel;
@@ -71,9 +62,45 @@ class CustomerApiProvider {
     return result;
   }
 
+  Future<bool> checkFavorite(String productId) async {
+    bool check = false;
+    var docSnapshot = await customer
+        .doc(user!.uid)
+        .collection('favorite').get();
+    for(var id  in docSnapshot.docs){
+      if(id.id == productId){
+        check = true;
+      }
+    }
+    return check;
+  }
+
+  favoriteProduct(String productId) {
+    customer
+        .doc(user!.uid)
+        .collection('favorite')
+        .doc(productId).set({});
+  }
+
+  unfavoriteProduct(String productId) {
+    customer
+        .doc(user!.uid)
+        .collection('favorite')
+        .doc(productId).delete();
+  }
+
+  Future<List<ProductModel>> getListFavorite() async {
+    List<ProductModel> list_product = [];
+    var docSnapshot = await customer.doc(user!.uid).collection('favorite').get();
+    for(var id  in docSnapshot.docs){
+      await getCartId(id.id).then((value) => list_product.add(value));
+    }
+    return list_product;
+  }
+
   //Address
   Future<String> setAddress(AddressModel addressModel) async {
-    return await customer
+    return customer
         .doc(user!.uid)
         .collection('address')
         .add(addressModel.toMap())
@@ -249,6 +276,7 @@ class CustomerApiProvider {
     return list_2;
   }
 
+
   //Voucher
   Future<void> saveVoucher(String id) async {
     return voucher
@@ -316,6 +344,23 @@ class CustomerApiProvider {
       });
     }
     return listActive;
+  }
+
+  Future<bool> checkVoucher(String id) async {
+    List<String> listId = [];
+    await voucher
+        .doc(id)
+        .collection('collection')
+        .get()
+        .then((value) => {listId = value.docs.map((e) => e.id).toList()});
+    print(listId.length);
+    for (int i = 0; i < listId.length; i++) {
+      if (listId[i] == user!.uid) {
+        return true;
+      }
+      print(listId[i]);
+    }
+    return false;
   }
 
   //Request Support
@@ -444,30 +489,6 @@ class CustomerApiProvider {
       deleteCart();
     });
   }
-
-  /*Future<List<CartModel>> getReceived() async {
-    List<CartModel> listNotReview = [];
-    await customer.doc(user!.uid)
-        .collection("purchase history")
-        .where("orderStatus", isEqualTo: "Đã nhận hàng")
-        .get().then((value){
-        for(int i = 0; i< value.docs.map((e) => e.id).toList().length; i++){
-          customer.doc(user!.uid)
-              .collection("purchase history").doc(value.docs.map((e) => e.id).toList()[i])
-              .collection('products').where("reviewStatus", isEqualTo: false)
-              .get().then((value){
-            if(value.docs.isNotEmpty){
-              for(var cartModel in value.docs.map((e) => CartModel.fromMap2(e)).toList()){
-                listNotReview.add(cartModel);
-              }
-
-            }
-          });
-        };
-    });
-    //print("Length: ${listId.length}");
-    return listNotReview;
-  }*/
 
   Future<void> deleteCart() async {
     await cart
@@ -674,7 +695,7 @@ class CustomerApiProvider {
     customer.doc(user?.uid).set(
       {
         'redeemPoint': FieldValue.increment(point),
-        'checkIn': true
+        'checkIn': "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"
       },
       SetOptions(merge: true),
     );

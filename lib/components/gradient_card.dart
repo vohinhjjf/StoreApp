@@ -70,7 +70,8 @@ class GradientCard extends StatelessWidget {
               Positioned.fill(
                 child: Row(
                   children: <Widget>[
-                    freeship == false
+                    point == 0
+                    ?freeship == false
                         ? Expanded(
                             flex: 2,
                             child: SvgPicture.asset(
@@ -84,7 +85,12 @@ class GradientCard extends StatelessWidget {
                               "assets/images/freeship.png",
                               height: 70,
                             ),
-                          ),
+                          )
+                    : const Expanded(
+                      flex: 2,
+                      child: Icon(Icons.diamond,
+                          color: Colors.white, size: 70),
+                    ),
                     Expanded(
                       flex: option == "Mới nhất" ? 4 : 2,
                       child: Column(
@@ -93,15 +99,18 @@ class GradientCard extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             name,
-                            style: const TextStyle(
-                                fontSize: mFontListTile,
-                                fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                fontSize: mFontSize,
+                                fontWeight: FontWeight.w700,
+                                color: point == 0 ? Colors.black : Colors.white
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Text(
                             'Tối đa ${maxDiscount}k',
-                            style: const TextStyle(
-                              fontSize: footnote,
+                            style: TextStyle(
+                              fontSize: subhead,
+                              color: point == 0 ? Colors.black : Colors.white
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -113,8 +122,9 @@ class GradientCard extends StatelessWidget {
                                 flex: 3,
                                 child: Text(
                                   'Hạn sử dụng: $time ngày',
-                                  style: const TextStyle(
-                                    fontSize: footnote,
+                                  style: TextStyle(
+                                    fontSize: subhead,
+                                      color: point == 0 ? Colors.black : Colors.white
                                   ),
                                 ),
                               ),
@@ -140,13 +150,13 @@ class GradientCard extends StatelessWidget {
                                                   Text(
                                                     point.toString(),
                                                     style: const TextStyle(
-                                                        color: Colors.blue,
+                                                        color: Colors.white,
                                                         fontSize: mFontTitle,
                                                         fontWeight:
                                                             FontWeight.w500),
                                                   ),
                                                   const Icon(Icons.diamond,
-                                                      color: Colors.blue, size: 14),
+                                                      color: Colors.white, size: 18),
                                                 ],
                                               ),
                                             ),

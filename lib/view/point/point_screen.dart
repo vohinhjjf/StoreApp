@@ -23,13 +23,17 @@ class _PointScreenState extends State<PointScreen> {
   final formKey = GlobalKey<FormState>();
   final focusNode = FocusNode();
   DateTime date = DateTime.now();
+  String time = "";
+  int temp = 0;
+
+
   final defaultPinTheme = PinTheme(
     width: 56,
     height: 56,
-    textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
+    textStyle: const TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
     decoration: BoxDecoration(
-      color: Color.fromRGBO(234, 239, 243, 1),
-      border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
+      color: const Color.fromRGBO(234, 239, 243, 1),
+      border: Border.all(color: const Color.fromRGBO(234, 239, 243, 1)),
       borderRadius: BorderRadius.circular(20),
     ),
   );
@@ -39,8 +43,23 @@ class _PointScreenState extends State<PointScreen> {
     return 100000 + Random().nextInt(899999);
   }
 
+  getDay(String checkIn) async {
+    if(checkIn != time){
+      temp = 1;
+      await repository.luckyNumber("");
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    time = "${date.day}/${date.month}/${date.year}";
+  }
+
   @override
   Widget build(BuildContext context) {
+    time = "${date.day}/${date.month}/${date.year}";
     return Scaffold(
       backgroundColor: Colors.grey.shade300,
       appBar: AppBar(
@@ -60,6 +79,7 @@ class _PointScreenState extends State<PointScreen> {
           stream: repository.getUserById(user!.uid).asStream(),
           builder: (context, AsyncSnapshot<CustomerModel> snapshot){
             if (snapshot.hasData) {
+              getDay(snapshot.data!.checkin);
               if(snapshot.data!.luckyNumber != "") {
                 pinController.text = snapshot.data!.luckyNumber;
               }
@@ -73,7 +93,7 @@ class _PointScreenState extends State<PointScreen> {
                           fit: StackFit.expand,
                           children: [
                             Container(
-                              margin: EdgeInsets.only(bottom: 50),
+                              margin: const EdgeInsets.only(bottom: 50),
                               decoration: BoxDecoration(
                                 //color: Colors.lightBlue.shade300,
                                 gradient: LinearGradient(
@@ -103,7 +123,7 @@ class _PointScreenState extends State<PointScreen> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 90,),
+                                  const SizedBox(height: 90,),
                                 ],
                               ),
                             ),
@@ -112,14 +132,14 @@ class _PointScreenState extends State<PointScreen> {
                               child: Container(
                                 height: 170,
                                 width: MediaQuery.of(context).size.width - 25,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
                                 ),
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(10),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -142,14 +162,14 @@ class _PointScreenState extends State<PointScreen> {
                                                           fontSize: caption1
                                                       ),
                                                     ),
-                                                    snapshot.data!.checkin
-                                                    ?Icon(Icons.check_circle_outline_rounded, color: Colors.redAccent)
+                                                    temp == 0
+                                                    ?const Icon(Icons.check_circle_outline_rounded, color: Colors.redAccent)
                                                     :Icon(Icons.diamond, color: Colors.yellow.shade800),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Hôm nay",
+                                              const SizedBox(height: 2,),
+                                              const Text("Hôm nay",
                                                 style: TextStyle(
                                                     color: Colors.redAccent,
                                                     fontSize: caption1,
@@ -170,13 +190,13 @@ class _PointScreenState extends State<PointScreen> {
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   children: [
-                                                    Text("+100", style: TextStyle(fontSize: caption1),),
+                                                    const Text("+100", style: TextStyle(fontSize: caption1),),
                                                     Icon(Icons.diamond, color: Colors.yellow.shade800),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Ngày 2", style: TextStyle(fontSize: caption1),),
+                                              const SizedBox(height: 2,),
+                                              const Text("Ngày 2", style: TextStyle(fontSize: caption1),),
                                             ],
                                           ),
                                           Column(
@@ -191,13 +211,13 @@ class _PointScreenState extends State<PointScreen> {
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   children: [
-                                                    Text("+100", style: TextStyle(fontSize: caption1),),
+                                                    const Text("+100", style: TextStyle(fontSize: caption1),),
                                                     Icon(Icons.diamond, color: Colors.yellow.shade800),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Ngày 3", style: TextStyle(fontSize: caption1),),
+                                              const SizedBox(height: 2,),
+                                              const Text("Ngày 3", style: TextStyle(fontSize: caption1),),
                                             ],
                                           ),
                                           Column(
@@ -212,13 +232,13 @@ class _PointScreenState extends State<PointScreen> {
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   children: [
-                                                    Text("+100", style: TextStyle(fontSize: caption1),),
+                                                    const Text("+100", style: TextStyle(fontSize: caption1),),
                                                     Icon(Icons.diamond, color: Colors.yellow.shade800),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Ngày 4", style: TextStyle(fontSize: caption1),),
+                                              const SizedBox(height: 2,),
+                                              const Text("Ngày 4", style: TextStyle(fontSize: caption1),),
                                             ],
                                           ),
                                           Column(
@@ -233,13 +253,13 @@ class _PointScreenState extends State<PointScreen> {
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   children: [
-                                                    Text("+100", style: TextStyle(fontSize: caption1),),
+                                                    const Text("+100", style: TextStyle(fontSize: caption1),),
                                                     Icon(Icons.diamond, color: Colors.yellow.shade800),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Ngày 5", style: TextStyle(fontSize: caption1),),
+                                              const SizedBox(height: 2,),
+                                              const Text("Ngày 5", style: TextStyle(fontSize: caption1),),
                                             ],
                                           ),
                                           Column(
@@ -254,13 +274,13 @@ class _PointScreenState extends State<PointScreen> {
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   children: [
-                                                    Text("+100", style: TextStyle(fontSize: caption1),),
+                                                    const Text("+100", style: TextStyle(fontSize: caption1),),
                                                     Icon(Icons.diamond, color: Colors.yellow.shade800),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Ngày 6", style: TextStyle(fontSize: caption1),),
+                                              const SizedBox(height: 2,),
+                                              const Text("Ngày 6", style: TextStyle(fontSize: caption1),),
                                             ],
                                           ),
                                           Column(
@@ -268,13 +288,13 @@ class _PointScreenState extends State<PointScreen> {
                                               Container(
                                                 height: 70,
                                                 width: 40,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   image: DecorationImage(
                                                     image: AssetImage("assets/images/diamond.jfif"),
                                                   ),
-                                                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                                  borderRadius: BorderRadius.all(Radius.circular(5)),
                                                 ),
-                                                child: Padding(
+                                                child: const Padding(
                                                   padding: EdgeInsets.only(top: 2, left: 5),
                                                   child: Text("+200",
                                                     style: TextStyle(
@@ -284,16 +304,16 @@ class _PointScreenState extends State<PointScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(height: 2,),
-                                              Text("Ngày 7", style: TextStyle(fontSize: caption1),),
+                                              const SizedBox(height: 2,),
+                                              const Text("Ngày 7", style: TextStyle(fontSize: caption1),),
                                             ],
                                           ),
                                         ],
                                       ),
                                     ),
-                                    snapshot.data!.checkin
+                                    temp == 0
                                     ?Container(
-                                      padding: EdgeInsets.only(top: 5, bottom: 5),
+                                      padding: const EdgeInsets.only(top: 5, bottom: 5),
                                       width: MediaQuery.of(context).size.width - 90,
                                       //height: 40,
                                       child: MaterialButton(
@@ -308,7 +328,7 @@ class _PointScreenState extends State<PointScreen> {
                                       ),
                                     )
                                     :Container(
-                                      padding: EdgeInsets.only(top: 5, bottom: 5),
+                                      padding: const EdgeInsets.only(top: 5, bottom: 5),
                                       width: MediaQuery.of(context).size.width - 90,
                                       //height: 40,
                                       child: MaterialButton(
@@ -332,15 +352,15 @@ class _PointScreenState extends State<PointScreen> {
                           ],
                         )
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Container(
                         color: Colors.white,
                         width: MediaQuery.of(context).size.width,
-                        child: Padding(
+                        child: const Padding(
                           padding: EdgeInsets.all(10),
-                          child: const Text('CHỌN SỐ TRÚNG THƯỞNG',
+                          child: Text('CHỌN SỐ TRÚNG THƯỞNG',
                             style: TextStyle(
                               fontSize: mFontTitle,
                               fontWeight: FontWeight.bold,
@@ -355,10 +375,10 @@ class _PointScreenState extends State<PointScreen> {
                         child: Container(
                           //height: 170,
                           width: MediaQuery.of(context).size.width - 25,
-                          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 45),
-                          decoration: BoxDecoration(
+                          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 45),
+                          decoration: const BoxDecoration(
                             color: Colors.white,
-                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Column(
                             children: [
@@ -368,18 +388,18 @@ class _PointScreenState extends State<PointScreen> {
                                 height: 40,
                                 decoration: BoxDecoration(
                                     color: Colors.lightBlue.shade400,
-                                    borderRadius: BorderRadius.only(
+                                    borderRadius: const BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         topLeft: Radius.circular(10))
                                 ),
                                 child: Text("PHIÊN CHƠI 00:00 NGÀY ${date.day}/${date.month}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: mFontSize,
                                         fontWeight: FontWeight.bold)
                                 ),
                               ),
-                              SizedBox(height: 15,),
+                              const SizedBox(height: 15,),
                               snapshot.data!.luckyNumber == ""
                               ?const Text("CHỌN 6 SỐ CỦA BẠN",
                                   style: TextStyle(
@@ -388,13 +408,13 @@ class _PointScreenState extends State<PointScreen> {
                                       fontWeight: FontWeight.bold)
                               )
                               :Text("Kết quả sẽ được cập nhật vào 16:00 ngày ${date.day +1}/${date.month}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.redAccent,
                                       fontSize: subhead,)
                               ),
-                              SizedBox(height: 15 ,),
+                              const SizedBox(height: 15 ,),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: Directionality(
                                   // Specify direction if desired
                                   textDirection: TextDirection.ltr,
@@ -408,12 +428,12 @@ class _PointScreenState extends State<PointScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20 ,),
+                              const SizedBox(height: 20 ,),
                               snapshot.data!.luckyNumber == ""
                               ?Column(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                                    padding: const EdgeInsets.only(top: 5, bottom: 5),
                                     width: MediaQuery.of(context).size.width - 100,
                                     height: 50,
                                     child: MaterialButton(
@@ -435,7 +455,7 @@ class _PointScreenState extends State<PointScreen> {
                                     ),
                                   ),
                                   Container(
-                                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                                    padding: const EdgeInsets.only(top: 5, bottom: 5),
                                     width: MediaQuery.of(context).size.width - 100,
                                     height: 50,
                                     child: MaterialButton(
@@ -458,7 +478,7 @@ class _PointScreenState extends State<PointScreen> {
                                 ],
                               )
                               :Container(
-                                padding: EdgeInsets.only(top: 5, bottom: 5),
+                                padding: const EdgeInsets.only(top: 5, bottom: 5),
                                 width: MediaQuery.of(context).size.width - 100,
                                 height: 50,
                                 child: MaterialButton(
@@ -476,14 +496,14 @@ class _PointScreenState extends State<PointScreen> {
                                   },
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 15,
                               ),
                               Container(
                                 height: 2,
                                 color: Colors.grey.shade200,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 15,
                               ),
                               Center(
@@ -496,14 +516,14 @@ class _PointScreenState extends State<PointScreen> {
                                     final showTime = (String text) => Container(
                                       width: 30,
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.symmetric(horizontal: 3),
+                                      margin: const EdgeInsets.symmetric(horizontal: 3),
                                       decoration: BoxDecoration(
                                         color: Colors.black,
                                         borderRadius: BorderRadius.circular(2),
                                       ),
                                       child: Text(
                                         text,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
@@ -523,7 +543,7 @@ class _PointScreenState extends State<PointScreen> {
                                                 fontSize: mFontListTile,
                                                 fontWeight: FontWeight.bold)
                                         ),
-                                        SizedBox(width: 5,),
+                                        const SizedBox(width: 5,),
                                         showTime(time[0]),
                                         showTime(time[1]),
                                         showTime(time[2]),
@@ -532,7 +552,7 @@ class _PointScreenState extends State<PointScreen> {
                                   },
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 15,
                               ),
                             ],
@@ -544,7 +564,7 @@ class _PointScreenState extends State<PointScreen> {
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             }
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           },
         ),
 
@@ -574,10 +594,10 @@ class _PointScreenState extends State<PointScreen> {
                    Text(
                     "${pinController.text} ",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.redAccent, fontWeight: FontWeight.w500),
                   ),
-                  Text(
+                  const Text(
                     "không?",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -592,7 +612,7 @@ class _PointScreenState extends State<PointScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     MaterialButton(
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                             side: BorderSide(color: Colors.redAccent),
                             borderRadius: BorderRadius.all(Radius.circular(3))
                         ),
@@ -604,7 +624,7 @@ class _PointScreenState extends State<PointScreen> {
                         }),
                     MaterialButton(
                       color: Colors.redAccent,
-                      shape: RoundedRectangleBorder(
+                      shape: const RoundedRectangleBorder(
                         //side: BorderSide(color: Colors.redAccent),
                         borderRadius: BorderRadius.all(Radius.circular(3))
                       ),

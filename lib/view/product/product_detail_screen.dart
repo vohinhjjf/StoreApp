@@ -15,8 +15,9 @@ import '../../Firebase/firebase_realtime_data_service.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   String id ="id";
+  Function() onPressed;
   final ProductModel product;
-  ProductDetailScreen(this.product,{required this.id});
+  ProductDetailScreen(this.product, this.onPressed,{required this.id});
 
   @override
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
@@ -29,6 +30,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   List<String> list_image = [];
   List<VideoPlayerController> list_video = [];
   bool loading = false;
+  bool like = false;
   double rate = 0;
 
   @override
@@ -36,6 +38,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     super.initState();
     selectData();
   }
+
+
 
   Future<void> selectData() async {
     List list = [];
@@ -66,7 +70,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.blueGrey[50],
-      appBar: ListAppBar().AppBarProduct(context, "Thông tin sản phẩm", widget.id),
+      appBar: ListAppBar().AppBarProduct(context, "Thông tin sản phẩm", widget.id, widget.onPressed),
       body: SingleChildScrollView(
         child: Container(
             decoration: const BoxDecoration(
@@ -98,7 +102,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   const SizedBox(
                     height: 5,
                   ),
-                  _buildPrice(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildPrice(),
+                      StreamBuilder(
+                          stream: customerApiProvider.checkFavorite(widget.product.id).asStream(),
+                          builder: (context, AsyncSnapshot<bool> snapshot){
+                            if(snapshot.hasData){
+                              return IconButton(
+                                iconSize: 28,
+                                onPressed: () {
+                                  setState(() {
+                                    if(snapshot.data!){
+                                      customerApiProvider.unfavoriteProduct(
+                                          widget.product.id);
+                                    }
+                                    else {
+                                      customerApiProvider.favoriteProduct(
+                                          widget.product.id);
+                                    }
+                                  });
+                                },
+                                icon: snapshot.data!
+                                    ?const Icon(MdiIcons.heart,)
+                                    :const Icon(MdiIcons.heartOutline,),
+                                color: Colors.red,
+                              );
+                            } else if(snapshot.hasError){
+                              return Container();
+                            }
+                            return const CircularProgressIndicator();
+                          }
+                      )
+                    ],
+                  ),
                   if (widget.product.discountPercentage != 0) Row(
                     children: [
                       Text(
