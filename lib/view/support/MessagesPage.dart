@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:store_app/view/support/AdminChatScreen.dart';
 import '../../constant.dart';
 import '../../utils/debouncer.dart';
 import '../../utils/utilities.dart';
@@ -138,13 +139,12 @@ class MessagesPageState extends State<MessagesPage> {
                             itemCount: snapshot.data?.docs.length,
                             controller: listScrollController,
                           );
-                        }
-                        else {
+                        } else {
                           return const Center(
                             child: Text("No users"),
                           );
                         }
-                      } else if (snapshot.hasError){
+                      } else if (snapshot.hasError) {
                         return Center(
                           child: Text(snapshot.error.toString()),
                         );
@@ -167,6 +167,27 @@ class MessagesPageState extends State<MessagesPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AdminChatPage(
+                arguments: ChatPageArguments(
+                  peerId: 'Admin',
+                  peerAvatar:
+                      'https://png.pngtree.com/png-clipart/20221227/original/pngtree-host-and-admin-marketing-job-vacancies-vector-png-image_8815346.png',
+                  peerNickname: 'Admin',
+                ),
+              ),
+            ),
+          );
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(
+          Icons.supervisor_account_outlined,
+        ),
+      ),
     );
   }
 
@@ -183,9 +204,12 @@ class MessagesPageState extends State<MessagesPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-             Text(
+            Text(
               "Conversations",
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.lightBlue.shade300),
+              style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.lightBlue.shade300),
             ),
             Container(
               padding:
@@ -284,7 +308,7 @@ class MessagesPageState extends State<MessagesPage> {
       BuildContext context, DocumentSnapshot? document, int index) {
     if (document != null) {
       CustomerModel userChat = CustomerModel.fromDocument(document);
-      
+
       userId = userChat.id;
       if (userChat.id == currentUserId) {
         return const SizedBox.shrink();
@@ -353,7 +377,9 @@ class MessagesPageState extends State<MessagesPage> {
                                 fontSize: 17),
                           ),
                         ),
-                        SizedBox(height: 5,),
+                        SizedBox(
+                          height: 5,
+                        ),
                         Container(
                           alignment: Alignment.centerLeft,
                           child: buildListMessage(),
