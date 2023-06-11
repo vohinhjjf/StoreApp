@@ -185,7 +185,7 @@ class MessagesPageState extends State<MessagesPage> {
         },
         backgroundColor: Colors.green,
         child: const Icon(
-          Icons.supervisor_account_outlined,
+          Icons.support_agent,
         ),
       ),
     );
