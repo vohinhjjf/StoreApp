@@ -9,7 +9,7 @@ class CampaignScreen extends StatefulWidget {
 class _CampaignScreenState extends State<CampaignScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.grey[50], body: Body());
+    return Scaffold(backgroundColor: Colors.grey[50], body: const Body());
   }
 }
 

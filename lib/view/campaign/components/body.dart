@@ -183,17 +183,17 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
         freeship: document['freeship'],
         time: document['time'],
         startColor: document['exchangedPoint'] == 0
-            ?const Color(0xfffdfcfb)
-            :const Color(0xff01bfff),
+            ? const Color(0xfffdfcfb)
+            : const Color(0xff01bfff),
         endColor: document['exchangedPoint'] == 0
-            ?const Color(0xffe2d1c3)
-            :const Color(0xff426fff),
+            ? const Color(0xffe2d1c3)
+            : const Color(0xff426fff),
         option: option,
         onclick: () {
           customerApiProvider.checkVoucher(document.id).then((value) {
-            if(value){
+            if (value) {
               notificationDialog(context);
-            }else{
+            } else {
               customerApiProvider
                   .saveVoucher(document.id)
                   .then((value) => successDialog(context));
@@ -343,8 +343,10 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                           ),
                         );
                       }
-                      if(snapshot.connectionState == ConnectionState.waiting){
-                        return const Center(child: CircularProgressIndicator(),);
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
                       return Column(
                         children: [
@@ -368,7 +370,8 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                               ? OutlinedButton(
                                   onPressed: () {
                                     setState(() {
-                                      customerApiProvider.exchangeVoucher(id, point);
+                                      customerApiProvider.exchangeVoucher(
+                                          id, point);
                                     });
                                     Navigator.of(context).pop();
                                     const snackBar = SnackBar(

@@ -14,6 +14,7 @@ import 'package:store_app/models/product_model.dart';
 
 import '../models/request_support_model.dart';
 import '../models/review_model.dart';
+import '../models/sticker_pack_model.dart';
 
 class CustomerApiProvider {
   User? user = FirebaseAuth.instance.currentUser;
@@ -23,8 +24,9 @@ class CustomerApiProvider {
   var voucher = FirebaseFirestore.instance.collection('Voucher');
   var banner = FirebaseFirestore.instance.collection('Banner');
   var blog = FirebaseFirestore.instance.collection('Blogs');
+  var stickerPack = FirebaseFirestore.instance.collection('Sticker Packs');
   FirebaseStorage storage = FirebaseStorage.instance;
-  var string;
+
   //User
   //create new user
   Future<void> createUserData(Map<String, dynamic> values) async {
@@ -45,8 +47,6 @@ class CustomerApiProvider {
     });
   }
 
-  
-
   //get user data by User id
   Future<CustomerModel> getUserById(String id) async {
     CustomerModel customerModel = CustomerModel();
@@ -64,11 +64,10 @@ class CustomerApiProvider {
 
   Future<bool> checkFavorite(String productId) async {
     bool check = false;
-    var docSnapshot = await customer
-        .doc(user!.uid)
-        .collection('favorite').get();
-    for(var id  in docSnapshot.docs){
-      if(id.id == productId){
+    var docSnapshot =
+        await customer.doc(user!.uid).collection('favorite').get();
+    for (var id in docSnapshot.docs) {
+      if (id.id == productId) {
         check = true;
       }
     }
@@ -76,23 +75,18 @@ class CustomerApiProvider {
   }
 
   favoriteProduct(String productId) {
-    customer
-        .doc(user!.uid)
-        .collection('favorite')
-        .doc(productId).set({});
+    customer.doc(user!.uid).collection('favorite').doc(productId).set({});
   }
 
   unfavoriteProduct(String productId) {
-    customer
-        .doc(user!.uid)
-        .collection('favorite')
-        .doc(productId).delete();
+    customer.doc(user!.uid).collection('favorite').doc(productId).delete();
   }
 
   Future<List<ProductModel>> getListFavorite() async {
     List<ProductModel> list_product = [];
-    var docSnapshot = await customer.doc(user!.uid).collection('favorite').get();
-    for(var id  in docSnapshot.docs){
+    var docSnapshot =
+        await customer.doc(user!.uid).collection('favorite').get();
+    for (var id in docSnapshot.docs) {
       await getCartId(id.id).then((value) => list_product.add(value));
     }
     return list_product;
@@ -275,7 +269,6 @@ class CustomerApiProvider {
     }
     return list_2;
   }
-
 
   //Voucher
   Future<void> saveVoucher(String id) async {
@@ -695,7 +688,8 @@ class CustomerApiProvider {
     customer.doc(user?.uid).set(
       {
         'redeemPoint': FieldValue.increment(point),
-        'checkIn': "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"
+        'checkIn':
+            "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"
       },
       SetOptions(merge: true),
     );
@@ -703,10 +697,29 @@ class CustomerApiProvider {
 
   Future<void> luckyNumber(String number) async {
     customer.doc(user?.uid).set(
-      {
-        'luckyNumber': number
-      },
+      {'luckyNumber': number},
       SetOptions(merge: true),
     );
+  }
+
+  Future<List<StickerPackModel>> getSticker() async {
+    var docSnapshot =
+        await customer.doc(user!.uid).collection('Sticker Packs').get();
+    List<StickerPackModel> list = docSnapshot.docs.isNotEmpty
+        ? docSnapshot.docs.map((e) => StickerPackModel.fromMap(e)).toList()
+        : [];
+    return list;
+  }
+
+  Future<bool> checkSticker(String id) async {
+    var docSnapshot =
+        await customer.doc(user!.uid).collection('Sticker Packs').get();
+    List<String> list = docSnapshot.docs.isNotEmpty
+        ? docSnapshot.docs.map((e) => e.id).toList()
+        : [];
+    if (list.contains(id)) {
+      return true;
+    }
+    return false;
   }
 }

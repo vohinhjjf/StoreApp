@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:store_app/view/sticker/sticker_screen.dart';
 
 import '../../constant.dart';
 import '../../mini_game_module/view/game_screen.dart';
@@ -138,8 +139,7 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                         child: GestureDetector(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                   GameScreen(),
+                              builder: (BuildContext context) => GameScreen(),
                             ),
                           ),
                           child: Container(
@@ -172,9 +172,11 @@ class _ExtensionsScreenState extends State<ExtensionsScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          /*Navigator.of(context).push(MaterialPageRoute (
-                            builder: (BuildContext context) => ProductListWidget('Điện thoại','Điện Thoại', widget.id),
-                          ));*/
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => const StickerPage(),
+                            ),
+                          );
                         },
                         child: Container(
                           width: 46,
