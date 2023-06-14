@@ -8,7 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app/models/sticker_model.dart';
 
+import '../../Firebase/firebase_realtime_data_service.dart';
 import '../../constant.dart';
 import '../../models/chat/chat_message_model.dart';
 import 'provider/ChatProvider.dart';
@@ -48,6 +50,8 @@ class ChatPageState extends State<ChatPage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   late ChatProvider chatProvider;
+
+  final customerApiProvider = CustomerApiProvider();
 
   @override
   void initState() {
@@ -586,106 +590,173 @@ class ChatPageState extends State<ChatPage> {
             color: Colors.white),
         padding: const EdgeInsets.all(5),
         height: 180,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi1', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi1.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: TabBar(
+                tabs: [
+                  Tab(icon: Image.asset('assets/images/mimi1.gif')),
+                  Tab(icon: Image.asset('assets/images/1.png')),
+                ],
+              ),
+              backgroundColor: Colors.blue,
+              automaticallyImplyLeading: false,
+            ),
+            body: TabBarView(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi1', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi1.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi2', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi2.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi3', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi3.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi4', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi4.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi5', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi5.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi6', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi6.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi7', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi7.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi8', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi8.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              onSendMessage('mimi9', TypeMessage.sticker),
+                          child: Image.asset(
+                            'assets/images/mimi9.gif',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi2', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi2.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi3', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi3.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                )
+                FutureBuilder(
+                    future: customerApiProvider.getUserSticker(),
+                    builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                            child: Image.asset(
+                                'assets/images/nothing_to_show.jpg'));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: GestureDetector(
+                                onTap: () => onSendMessage(
+                                    snapshot.data![index], TypeMessage.image),
+                                child: FadeInImage(
+                                  placeholder: const AssetImage(
+                                      "assets/images/img_not_available.jpeg"),
+                                  image: Image.network(
+                                    snapshot.data![index],
+                                    errorBuilder: (context, error,
+                                            stackTrace) =>
+                                        Image.asset(
+                                            'assets/images/img_not_available.jpeg'),
+                                  ).image,
+                                ),
+                              ));
+                        },
+                      );
+                    }),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi4', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi4.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi5', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi5.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi6', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi6.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi7', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi7.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi8', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi8.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi9', TypeMessage.sticker),
-                  child: Image.asset(
-                    'assets/images/mimi9.gif',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-            )
-          ],
+          ),
         ),
       ),
     );
