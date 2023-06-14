@@ -11,6 +11,7 @@ import 'package:store_app/models/campaign_model.dart';
 import 'package:store_app/models/cart_model.dart';
 import 'package:store_app/models/customer_model.dart';
 import 'package:store_app/models/product_model.dart';
+import 'package:store_app/models/sticker_model.dart';
 
 import '../models/request_support_model.dart';
 import '../models/review_model.dart';
@@ -713,13 +714,42 @@ class CustomerApiProvider {
 
   Future<bool> checkSticker(String id) async {
     var docSnapshot =
-        await customer.doc(user!.uid).collection('Sticker Packs').get();
+        await customer.doc(user!.uid).collection('StickerPacks').get();
     List<String> list = docSnapshot.docs.isNotEmpty
         ? docSnapshot.docs.map((e) => e.id).toList()
         : [];
+    print(list[0] + id);
     if (list.contains(id)) {
+      print('FUCKKKKKKKKKKKKKKKKKKKKKKKKKKKKK');
       return true;
+    } else {
+      return false;
     }
-    return false;
+  }
+
+  Future<List<String>> getUserSticker() async {
+    List<String> listUserSticker = [];
+    List<String> listActive = [];
+    await customer.doc(user!.uid).collection('StickerPacks').get().then(
+        (value) => {listUserSticker = value.docs.map((e) => e.id).toList()});
+
+    for (int i = 0; i < listUserSticker.length; i++) {
+      await stickerPack
+          .doc(listUserSticker[i])
+          .collection('Stickers')
+          .get()
+          .then((value) async {
+        if (value.docs.isNotEmpty) {
+          List<String> listTemp =
+              value.docs.map((e) => e['image'].toString()).toList();
+          listActive.addAll(listTemp);
+        }
+      });
+    }
+    return listActive;
+  }
+
+  Future<void> addSticker(String id) async {
+    customer.doc(user!.uid).collection('StickerPacks').doc(id).set({'id': id});
   }
 }

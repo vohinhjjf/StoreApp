@@ -17,9 +17,9 @@ class StickerPackCard extends StatefulWidget {
 }
 
 class _StickerPackCardState extends State<StickerPackCard> {
+  final customerApiProvider = CustomerApiProvider();
   @override
   Widget build(BuildContext context) {
-    final customerApiProvider = CustomerApiProvider();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SizedBox(
@@ -45,28 +45,31 @@ class _StickerPackCardState extends State<StickerPackCard> {
           trailing: FutureBuilder(
               future: customerApiProvider.checkSticker(widget.stickerPack.id),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                print('EEEEEEEEEEEEEEEEEEEEEEEEEEE : ${snapshot.data}');
                 return snapshot.connectionState == ConnectionState.waiting ||
                         snapshot.data == null
                     ? const Text("+")
                     : addStickerPackButton(
-                        snapshot.data as bool,
-                      );
+                        snapshot.data as bool, widget.stickerPack.id);
               }),
         ),
       ),
     );
   }
 
-  Widget addStickerPackButton(
-    bool isInstalled,
-  ) {
+  Widget addStickerPackButton(bool isInstalled, String id) {
     return IconButton(
       icon: Icon(
         isInstalled ? Icons.check : Icons.add,
       ),
       color: Colors.teal,
-      tooltip: isInstalled ? 'Add Sticker' : 'Sticker is added',
-      onPressed: () async {},
+      tooltip: !isInstalled ? 'Add Sticker' : 'Sticker is added',
+      onPressed: () async {
+        if (!isInstalled) {
+          customerApiProvider.addSticker(id);
+          setState(() => isInstalled = true);
+        }
+      },
     );
   }
 }

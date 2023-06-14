@@ -43,8 +43,9 @@ class _StickerPackInfoScreenState extends State<StickerPackInfoScreen> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue.shade300,
         centerTitle: true,
-       
-        title: Text("${widget.stickerPack.name} Stickers", style: const TextStyle(color: Colors.white),
+        title: Text(
+          "${widget.stickerPack.name} Stickers",
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Column(
@@ -125,7 +126,7 @@ class _StickerPackInfoScreenState extends State<StickerPackInfoScreen> {
                     },
                   ),
                 );
-              })
+              }),
         ],
       ),
       persistentFooterButtons: fakeBottomButtons,
