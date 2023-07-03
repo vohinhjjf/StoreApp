@@ -136,7 +136,7 @@ class _PurchaseDetailState extends State<PurchaseDetail> {
     );
   }
   buildData(DocumentSnapshot document){
-    List<dynamic> list = document['products'];
+    List<dynamic> list = [];
     return ListView(
       children: [
         Container(
@@ -252,14 +252,31 @@ class _PurchaseDetailState extends State<PurchaseDetail> {
               const SizedBox(
                 height: 6,
               ),
-              ListView.builder(
-                //padding: const EdgeInsets.only(bottom: 150),
-                shrinkWrap: true,
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  return buildItem(Map<String, dynamic>.from(document['products'][index]));
-                },
-              )
+              StreamBuilder(
+                  stream: customerApiProvider.customer.doc(customerApiProvider.user!.uid)
+                      .collection("purchase history").doc(document.id)
+                      .collection("products").snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return Container();
+                      }
+                      List list = snapshot.data!.docs;
+                      return ListView.builder(
+                        //padding: const EdgeInsets.only(bottom: 150),
+                        shrinkWrap: true,
+                        itemCount: list.length,
+                        itemBuilder: (context, index) {
+                          return buildItem(list[index]);
+                        },
+                      );
+                    }
+                    else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  }
+              ),
             ],
           ),
         ),
@@ -392,7 +409,7 @@ class _PurchaseDetailState extends State<PurchaseDetail> {
     );
   }
 
-  buildItem(Map<String, dynamic> document) {
+  buildItem(dynamic document) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

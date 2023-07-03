@@ -13,7 +13,6 @@ class DetailInfo extends StatefulWidget {
   _DetailInfoState createState() => _DetailInfoState();
 }
 class _DetailInfoState extends State<DetailInfo> {
-  late Future<CustomerModel?> _value;
   final user = FirebaseAuth.instance.currentUser;
   final _repository = Repository();
   

@@ -55,8 +55,8 @@ class Repository {
   Future<AddressModel> selectAddressDefault() =>
       customerApiProvider.selectAddressDefault();
 
-  Future<String> updateAddressDefault(String id) =>
-      customerApiProvider.updateAddressDefault(id);
+  Future<String> updateAddressDefault(String id, int length) =>
+      customerApiProvider.updateAddressDefault(id, length);
 
   Future<DocumentSnapshot> checkID(String id) =>
       customerApiProvider.checkID(id);

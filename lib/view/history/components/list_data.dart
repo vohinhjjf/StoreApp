@@ -93,8 +93,9 @@ class _ListDataState extends State<ListData> {
                   //margin: EdgeInsets.fromLTRB(5, space_height, 5, 0),
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
-                    onTap: () async {
-
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute (builder: (BuildContext context) => PurchaseDetail(purchaseId: document.id,status: widget.status,)));
                     },
                     child: Container(
                       width: 300,
@@ -140,9 +141,10 @@ class _ListDataState extends State<ListData> {
                                         ),
                                       ),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          OutlinedButton(
+                                          widget.status=="Đang xử lý"
+                                          ?OutlinedButton(
                                               autofocus: true,
                                               style: OutlinedButton.styleFrom(
                                                 //minimumSize: MediaQuery.of(context).size,
@@ -153,13 +155,13 @@ class _ListDataState extends State<ListData> {
                                                   )
                                               ),
                                               onPressed:() {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute (builder: (BuildContext context) => PurchaseDetail(purchaseId: document.id,status: widget.status,)));
+                                                  Dialog3(context, document.id, list);
                                               },
                                               child: const Text(
-                                                "Xem chi tiết",
+                                                "Đã nhận hàng",
                                                 style:  TextStyle(fontSize: mFontListTile, color: mPrimaryColor),
-                                              )),
+                                              ))
+                                          :SizedBox(),
                                           widget.status=="Đang xử lý"
                                               ?OutlinedButton(
                                               autofocus: true,
@@ -322,5 +324,54 @@ class _ListDataState extends State<ListData> {
         _timer.cancel();
       }
     });
+  }
+
+  Dialog3(BuildContext context, String orderId, List<dynamic> list){
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Column(
+              children:  [
+                Text(
+                  "Bạn đã nhận được đơn hàng?",
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  MaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        Navigator.of(context).pop();
+                        customerApiProvider.statusOrder(orderId, "Đã nhận hàng");
+                        customerApiProvider.addSold(list);
+                      });
+                    },
+                    child: const Text(
+                      'ĐỒNG Ý',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'HỦY BỎ',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
   }
 }

@@ -41,10 +41,153 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   final customerApiProvider = CustomerApiProvider();
+  List users = [];
+  List<ProductModel> products = [];
+  List<Set<dynamic>> list_value = [];
+  List<Set<dynamic>> list_rate = [];
+  List<Set<dynamic>> list_product_recommend = [];
+  List<ProductModel> _productViewModel = [];
+
+  getListReview() async {
+    List<Set<dynamic>> listvalue = [];
+    await customerApiProvider.customer.get().then((value) async {
+      for(var user in value.docs.toList()) {
+        await customerApiProvider.customer.doc(user.id).collection("review").where(
+            "rate", isGreaterThan: 0).get().then((value2) {
+          if(value2.docs.isNotEmpty) {
+            for(var doc in value2.docs) {
+              listvalue.add({user.id, doc.data()["productId"], doc.data()["rate"]});
+            }
+          }
+        });
+      }
+    });
+    setState(() {
+      list_value = listvalue;
+    });
+  }
+
+  getListProduct() async {
+    await customerApiProvider.product.get().then((value) {
+      for(var product in value.docs.toList()) {
+        products.add(ProductModel.fromMap(product));
+      }
+    });
+    diffirenceProduct();
+  }
+
+  diffirenceProduct(){
+    List<List<Set<dynamic>>> list = [];
+    for(int i = 0; i < products.length; i++){
+      List<Set<dynamic>> list_user_use_product_1 = [];
+      for(var matrix in list_value){
+        if(matrix.toList()[1] == products[i].id){
+          list_user_use_product_1.add({matrix.toList()[0], matrix.toList()[2]});
+        }
+      }
+      list.add(list_user_use_product_1);
+    }
+    for(int i = 0; i < list.length; i++){
+      for(int j = i +1; j < list.length; j++){
+        getRate(list[i], list[j], i , j);
+      }
+    }
+  }
+
+  getListRecommend() async {
+    List<Set<dynamic>> list_product_reviewed = [];
+    List<String> list_product_not_review = [];
+    await customerApiProvider.customer.doc(customerApiProvider.user!.uid).collection("review").where(
+        "rate", isGreaterThan: 0).get().then((value) {
+      if(value.docs.isNotEmpty) {
+        for(var doc in value.docs) {
+          list_product_reviewed.add({doc.data()["productId"], doc.data()["rate"]});
+        }
+      }
+    });
+
+    for(var product in products){
+      if(!list_product_reviewed.contains(product.id)){
+        list_product_not_review.add(product.id);
+      }
+    }
+
+    for(var not_review in list_product_not_review){
+      double final_rate = 0;
+      double total_temp = 0;
+      for(var reviewed in list_product_reviewed){
+        for(var rate in list_rate){
+          if(rate.toList()[0] == not_review && rate.toList()[1] == reviewed.toList()[0]){
+            final_rate = final_rate + ((reviewed.toList()[1] as double) + (rate.toList()[2] as double)) * int.parse(rate.toList()[3]);
+            total_temp = total_temp + int.parse(rate.toList()[3]);
+          }
+        }
+      }
+      if(total_temp == 0){
+        //list_product_recommend.add({not_review, 0});
+      }else {
+        list_product_recommend.add({not_review, final_rate/total_temp});
+      }
+    }
+    for (int i = 0; i < list_product_recommend.length - 1; i++)
+    {
+      //j sẽ được duyệt từ vị trí của phân tử chưa sắp xếp tới cuối mảng
+      for (int j = i + 1; j < list_product_recommend.length; j++)
+      {
+        //Nếu phần tử đang kiểm tra(a[i]) bé hơn phần tử khi ta duyệt mảng để kiểm tra(a[j])
+        if(list_product_recommend[i].toList()[1] < list_product_recommend[j].toList()[1])
+        {
+          //Ta đảo vị trí của 2 phần tử
+          Set<dynamic> temp = list_product_recommend[i];
+          list_product_recommend[i] = list_product_recommend[j];
+          list_product_recommend[j] = temp;
+        }
+      }
+    }
+  }
+
+  getRate(List<Set<dynamic>> list_a, List<Set<dynamic>> list_b, int i, int j){
+    int temp = 0;double rate = 0;
+    for(int i = 0; i < list_a.length; i++){
+      for(int j = 0; j < list_b.length; j++){
+        if(list_b[j].toList()[0] == list_a[i].toList()[0]){
+          temp = temp + 1;
+          rate = rate + (list_a[i].toList()[1] as double) - (list_b[j].toList()[1] as double);
+        }
+      }
+    }
+    if(temp == 0) {
+      list_rate.add({products[i].id, products[j].id, rate, temp.toString()});
+    } else {
+      list_rate.add({products[i].id, products[j].id, rate/temp, temp.toString()});
+    }
+  }
+
+  user() async {
+
+    await getListReview();
+    await getListProduct();
+    await getListRecommend();
+
+    for(var i =0; i < list_product_recommend.length; i++) {
+      print(list_product_recommend[i]);
+      for(var product in products){
+        if(product.id == list_product_recommend[i].toList()[0]){
+          _productViewModel.add(product);
+        }
+      }
+    }
+    setState(() {
+      _productViewModel = _productViewModel;
+    });
+  }
+
   @override
   initState() {
     super.initState();
+    user();
   }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -282,24 +425,20 @@ class _BodyState extends State<Body> {
                 }
             ),
             //Sản phẩm nổi bật
-            StreamBuilder(
-                stream: customerApiProvider.product
-                    .where('collection', isEqualTo: 'Sản phẩm nổi bật')
-                    .where("active", isEqualTo: true).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-                    if(snapshot.hasData){
-                      List<ProductModel> list = snapshot.data!.docs.isNotEmpty
-                          ? snapshot.data!.docs.map((e) => ProductModel.toMap(e)).toList()
-                          : [];
-                      return ProductLoadMore(list,'Sản Phẩm Nổi Bật');
-                    }
-                    else if(snapshot.hasError) {
-                      print('Lỗi: ${snapshot.error}');
-                      return Container();
-                    }
-                    return const Center(child: CircularProgressIndicator());
+            ProductLoadMore(_productViewModel,'Gợi ý hôm nay')
+            /*FutureBuilder(
+                future: user(),
+                builder: (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot){
+                  if(snapshot.hasData){
+                    return ProductLoadMore(snapshot.data!,'Gợi ý hôm nay');
+                  }
+                  else if(snapshot.hasError) {
+                    print('Lỗi: ${snapshot.error}');
+                    return Container();
+                  }
+                  return const Center(child: CircularProgressIndicator());
                 }
-            ),
+            ),*/
           ]
       ),
     );

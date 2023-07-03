@@ -46,7 +46,12 @@ class _ReviewDetailState extends State<ReviewDetail> {
                 color: mPrimaryColor,
                 size: mFontListTile,
               ),
-              onPressed: () => Navigator.of(context).pop()),
+              onPressed: () => Navigator.of(context).pushReplacement(
+                MaterialPageRoute (
+                  builder: (BuildContext context) => ReviewScreen(),
+                ),
+              )
+          ),
           backgroundColor: Colors.white,
           centerTitle: true,
           title: const Text(

@@ -97,12 +97,12 @@ class _DeliveryAddressPageWidgetState extends State<DeliveryAddressPage> {
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: list_cartModel.length,
       itemBuilder: (context, index) {
-        return productInfo(context,list_cartModel[index]);
+        return productInfo(context,list_cartModel[index], list_cartModel.length);
       },
     );
   }
 
-  Widget productInfo(BuildContext context,AddressModel addressModel) {
+  Widget productInfo(BuildContext context,AddressModel addressModel, int length) {
     return Card(
       shape: RoundedRectangleBorder(
         side: const BorderSide(color: Colors.white70, width: 1),
@@ -113,7 +113,7 @@ class _DeliveryAddressPageWidgetState extends State<DeliveryAddressPage> {
         splashColor: Colors.blue.withAlpha(30),
         onTap: () {
           setState(() {
-            Dialog(context, addressModel);
+            Dialog(context, addressModel, length);
           });
         },
         child: Stack(
@@ -246,12 +246,12 @@ class _DeliveryAddressPageWidgetState extends State<DeliveryAddressPage> {
     );
   }
 
-  Dialog(BuildContext context,AddressModel addressModel) {
+  Dialog(BuildContext context,AddressModel addressModel, int length) {
     return showDialog(
         useRootNavigator: false,
         context: context,
         builder: (BuildContext context) {
-          _repository.updateAddressDefault(addressModel.id).then((value) => {
+          _repository.updateAddressDefault(addressModel.id, length).then((value) => {
                 Navigator.pop(context),
                 Navigator.of(context, rootNavigator: true).pop()
             }

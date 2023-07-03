@@ -49,7 +49,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       }
     );
     for(var review in list){
-      rate = (rate + review['rate'])/list.length;
+      rate = rate + review['rate'];
       for(var url in review['reviewImage']){
         await validateImage(url).then((value) async {
           if(value){
@@ -62,6 +62,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
     setState(() {
       loading = true;
+      rate = rate/list.length;
     });
   }
 

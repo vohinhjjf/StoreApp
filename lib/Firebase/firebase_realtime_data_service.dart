@@ -130,14 +130,16 @@ class CustomerApiProvider {
     return addressModel;
   }
 
-  Future<String> updateAddressDefault(String id) async {
-    await selectAddressDefault().then((value) async {
-      await customer
-          .doc(user!.uid)
-          .collection('address')
-          .doc(value.id)
-          .update({"mac_dinh": false});
-    });
+  Future<String> updateAddressDefault(String id, int length) async {
+    if(length > 1) {
+      await selectAddressDefault().then((value) async {
+        await customer
+            .doc(user!.uid)
+            .collection('address')
+            .doc(value.id)
+            .update({"mac_dinh": false});
+      });
+    }
     var result = await customer
         .doc(user!.uid)
         .collection('address')
@@ -504,6 +506,15 @@ class CustomerApiProvider {
         .collection('purchase history')
         .doc(orderId)
         .update({"orderStatus": status});
+  }
+
+  Future<void> addSold(List<dynamic> list) async {
+    for(var doc in list) {
+      product.doc(doc['productId']).set(
+        {'sold': FieldValue.increment(doc['amount'])},
+        SetOptions(merge: true),
+      );
+    }
   }
 
   //review

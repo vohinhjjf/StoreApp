@@ -70,12 +70,12 @@ dependencies:
   flutter_credit_card: ^3.0.6
   flutter_slidable: ^2.0.0
   flutter_markdown: ^0.6.14
-  stylish_bottom_bar: ^1.0.1
+  stylish_bottom_bar: ^1.0.0
   bordered_text: ^2.0.0
   flutter_staggered_grid_view: ^0.4.0
   confetti: ^0.7.0
   rflutter_alert: ^2.0.5
-  pinput: ^2.2.22
+  pinput: ^2.2.21
   countdown_flutter_ns: ^0.0.1
   
 dev_dependencies:

@@ -152,12 +152,9 @@ class _BodyState extends State<Body> {
                           DatePicker.showDatePicker(context,
                               showTitleActions: true,
                               minTime: DateTime(1921, 1, 1),
-                              maxTime: DateTime.now(), onChanged: (date) {
-                                /* print(
-                          'change $date in time zone ${date.timeZoneOffset.inHours.toString()}',
-                        ); */
-                              }, onConfirm: (date) {
-                                //print('confirm $date');
+                              maxTime: DateTime.now(),
+                              onChanged: (date) {},
+                              onConfirm: (date) {
                                 String formattedDate =
                                 DateFormat('dd / MM / yyyy').format(date);
                                 setState(() {

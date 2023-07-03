@@ -33,7 +33,7 @@ class ProductModel {
     this.checkBuy = false
   });
 
-  factory ProductModel.fromMap(QueryDocumentSnapshot<Map<String, dynamic>> json) => ProductModel(
+  factory ProductModel.fromMap(DocumentSnapshot<Map<String, dynamic>> json) => ProductModel(
       id: json.id,
       name: json['name'],
       image: json['image'],

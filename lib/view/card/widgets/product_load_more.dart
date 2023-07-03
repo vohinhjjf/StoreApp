@@ -36,7 +36,7 @@ class _ProductLoadMoreState extends State<ProductLoadMore> {
     child: Text(
       widget.id,
       style: TextStyle(
-        color: widget.id == 'Sản Phẩm Nổi Bật'? Colors.deepOrange : Colors.black,
+        color: widget.id == 'Gợi ý hôm nay'? Colors.deepOrange : Colors.black,
         fontSize: mFontTitle,
         fontWeight: FontWeight.bold,
       ),
@@ -63,7 +63,6 @@ class _ProductLoadMoreState extends State<ProductLoadMore> {
       false ? const SizedBox(height: 150) : BottomLoader(),
     ],
   );
-
 }
 
 class ProductItemCard extends StatelessWidget {
